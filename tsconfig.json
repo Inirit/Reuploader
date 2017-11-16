@@ -1,0 +1,25 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "target": "ES2016",
+        "module": "commonjs",
+        "allowSyntheticDefaultImports": true,
+        "allowJs": true,
+        "preserveConstEnums": true,
+        "removeComments": false,
+        "outDir": "js",
+        "watch": true,
+        "sourceMap": false,
+        "traceResolution": false,
+        "moduleResolution": "node",
+        "baseUrl": ".",
+        "paths": {},
+        "typeRoots": [
+            "node_modules/@types",
+            "node_modules/web-ext-types"
+        ]
+    },
+    "include": [
+        "ts/**/*"
+    ]
+}

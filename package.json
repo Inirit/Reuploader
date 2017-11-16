@@ -1,0 +1,26 @@
+{
+  "name": "reuploader",
+  "version": "0.0.0",
+  "description": "",
+  "contributors": [
+    {
+      "name": "Inirit",
+      "url": "https://github.com/Inirit"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/Inirit/Reuploader/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Inirit/Reuploader.git"
+  },
+  "dependencies": {
+    "jquery": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.2.16",
+    "web-ext-types": "^1.1.1"
+  }
+}
