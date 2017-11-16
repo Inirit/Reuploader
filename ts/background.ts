@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 function onCreated()
 {
 	if (browser.runtime.lastError)
@@ -38,20 +40,17 @@ function uploadImage(data)
 
 function getImage(url)
 {
-	let xhttp = new XMLHttpRequest();
-
-	xhttp.open('GET', url)
-	xhttp.onreadystatechange = function ()
-	{
-		if (xhttp.readyState === XMLHttpRequest.DONE && xhttp.status === 200)
+	let jqXHR = $.get(url)
+		.done(data =>
 		{
 			console.log("I did the thing");
 
-			uploadImage(xhttp.response);
-		}
-	}
-
-	xhttp.send();
+			uploadImage(data);
+		})
+		.fail(() =>
+		{
+			console.error("I failed the thing");
+		});
 }
 
 browser.contextMenus.create({
@@ -59,3 +58,16 @@ browser.contextMenus.create({
 	title: browser.i18n.getMessage("menu1Title"),
 	contexts: ["image"]
 }, onCreated);
+
+browser.contextMenus.onClicked.addListener((info, tab) =>
+{
+	console.log("Item " + info.menuItemId + " clicked " +
+		"in tab " + tab.id);
+
+	switch (info.menuItemId)
+	{
+		case "menu1":
+			getImage(info.srcUrl);
+			break;
+	}
+});

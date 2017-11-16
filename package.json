@@ -17,7 +17,8 @@
     "url": "https://github.com/Inirit/Reuploader.git"
   },
   "dependencies": {
-    "jquery": "^3.2.1"
+    "jquery": "^3.2.1",
+    "systemjs": "^0.20.19"
   },
   "devDependencies": {
     "@types/jquery": "^3.2.16",

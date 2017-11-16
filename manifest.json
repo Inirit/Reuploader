@@ -15,8 +15,12 @@
     ],
     "background": {
         "scripts": [
+            "/node_modules/jquery/dist/jquery.js",
+            "/node_modules/systemjs/dist/system.js",
+            "js/systemBootstrap.js",
             "js/background.js",
             "js/uploaders/pomfUploader.js"
         ]
-    }
+    },
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';"
 }
