@@ -21,7 +21,7 @@ function onError(error: string)
 	console.log(`Error: ${error}`);
 }
 
-function uploadImage(imageData)
+function uploadImage(imageData: Blob)
 {
 	let formData = new FormData();
 	formData.append('files[]', imageData, "image.jpg");
@@ -65,11 +65,11 @@ function uploadImage(imageData)
 		})
 		.fail((jqXHR, textStatus, error) =>
 		{
-			console.error(`Image upload failed! ${textStatus}, ${error}`);
+			console.error(`Image upload failed! Status: ${textStatus}, Error: ${error}`);
 		});
 }
 
-function getImage(url)
+function getImage(url: string)
 {
 	$.ajax(
 		{
@@ -82,33 +82,40 @@ function getImage(url)
 				return myXhr;
 			}
 		})
-		.done(data =>
+		.done((data: Blob) =>
 		{
-			console.log("I did the thing");
+			console.debug(`Image download complete. Size: ${data.size}, Type: ${data.type}`);
 
 			uploadImage(data);
 		})
-		.fail(() =>
+		.fail((jqXHR, textStatus, error) =>
 		{
-			console.error("I failed the thing");
+			console.error(`Image download failed! Status: ${textStatus}, Error: ${error}`);
 		});
 }
 
 browser.contextMenus.create({
-	id: "menu1",
-	title: browser.i18n.getMessage("menu1Title"),
+	id: "reuploadImageMenuItem",
+	title: browser.i18n.getMessage("reuploadImageMenuItemLabel"),
 	contexts: ["image"]
 }, onCreated);
 
 browser.contextMenus.onClicked.addListener((info, tab) =>
 {
-	console.log("Item " + info.menuItemId + " clicked " +
-		"in tab " + tab.id);
-
 	switch (info.menuItemId)
 	{
-		case "menu1":
-			getImage(info.srcUrl);
+		case "reuploadImageMenuItem":
+			if (!info.srcUrl)
+			{
+				console.error(`Image was selected, but src url could not be found!`);
+			}
+			else
+			{
+				console.debug(`Image selected. SrcUrl: ${info.srcUrl}, TabId: ${tab.id}`);
+
+				getImage(info.srcUrl);
+			}
+
 			break;
 	}
 });

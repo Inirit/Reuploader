@@ -48,7 +48,7 @@ System.register(["jquery"], function (exports_1, context_1) {
             console.log(data);
         })
             .fail((jqXHR, textStatus, error) => {
-            console.error(`Image upload failed! ${textStatus}, ${error}`);
+            console.error(`Image upload failed! Status: ${textStatus}, Error: ${error}`);
         });
     }
     function getImage(url) {
@@ -61,12 +61,12 @@ System.register(["jquery"], function (exports_1, context_1) {
                 return myXhr;
             }
         })
-            .done(data => {
-            console.log("I did the thing");
+            .done((data) => {
+            console.debug(`Image download complete. Size: ${data.size}, Type: ${data.type}`);
             uploadImage(data);
         })
-            .fail(() => {
-            console.error("I failed the thing");
+            .fail((jqXHR, textStatus, error) => {
+            console.error(`Image download failed! Status: ${textStatus}, Error: ${error}`);
         });
     }
     var jquery_1;
@@ -78,16 +78,20 @@ System.register(["jquery"], function (exports_1, context_1) {
         ],
         execute: function () {
             browser.contextMenus.create({
-                id: "menu1",
-                title: browser.i18n.getMessage("menu1Title"),
+                id: "reuploadImageMenuItem",
+                title: browser.i18n.getMessage("reuploadImageMenuItemLabel"),
                 contexts: ["image"]
             }, onCreated);
             browser.contextMenus.onClicked.addListener((info, tab) => {
-                console.log("Item " + info.menuItemId + " clicked " +
-                    "in tab " + tab.id);
                 switch (info.menuItemId) {
-                    case "menu1":
-                        getImage(info.srcUrl);
+                    case "reuploadImageMenuItem":
+                        if (!info.srcUrl) {
+                            console.error(`Image was selected, but src url could not be found!`);
+                        }
+                        else {
+                            console.debug(`Image selected. SrcUrl: ${info.srcUrl}, TabId: ${tab.id}`);
+                            getImage(info.srcUrl);
+                        }
                         break;
                 }
             });
