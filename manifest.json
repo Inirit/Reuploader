@@ -10,7 +10,8 @@
     },
     "permissions": [
         "<all_urls>",
-        "contextMenus"
+        "contextMenus",
+        "clipboardWrite"
     ],
     "background": {
         "scripts": [
