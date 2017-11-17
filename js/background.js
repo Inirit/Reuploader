@@ -15,18 +15,52 @@ System.register(["jquery"], function (exports_1, context_1) {
     function onError(error) {
         console.log(`Error: ${error}`);
     }
-    function uploadImage(data) {
-        let xhttpUpload = new XMLHttpRequest();
-        xhttpUpload.open('POST', 'https://pomf.cat/upload.php');
-        xhttpUpload.onreadystatechange = function () {
-            if (xhttpUpload.readyState === XMLHttpRequest.DONE && xhttpUpload.status === 200) {
-                console.log("I did the thing");
-                uploadImage(xhttpUpload.response);
+    function uploadImage(imageData) {
+        let formData = new FormData();
+        formData.append('files[]', imageData, "image.jpg");
+        console.log(formData.get('files[]'));
+        let jqXHR = jquery_1.default.ajax({
+            url: 'https://pomf.cat/upload.php',
+            type: 'POST',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            xhr: function () {
+                var myXhr = jquery_1.default.ajaxSettings.xhr();
+                if (myXhr.upload) {
+                    // For handling the progress of the upload
+                    myXhr.upload.addEventListener('progress', function (e) {
+                        if (e.lengthComputable) {
+                            jquery_1.default('progress').attr({
+                                value: e.loaded,
+                                max: e.total,
+                            });
+                            console.log(`Progress: ${e.loaded}, ${e.total}`);
+                        }
+                    }, false);
+                }
+                return myXhr;
             }
-        };
+        })
+            .done(data => {
+            console.log("Image upload complete!");
+            console.log(data);
+        })
+            .fail((jqXHR, textStatus, error) => {
+            console.error(`Image upload failed! ${textStatus}, ${error}`);
+        });
     }
     function getImage(url) {
-        let jqXHR = jquery_1.default.get(url)
+        jquery_1.default.ajax({
+            url: url,
+            type: "GET",
+            xhr: function () {
+                var myXhr = jquery_1.default.ajaxSettings.xhr();
+                myXhr.responseType = "blob";
+                return myXhr;
+            }
+        })
             .done(data => {
             console.log("I did the thing");
             uploadImage(data);

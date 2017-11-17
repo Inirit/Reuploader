@@ -21,26 +21,67 @@ function onError(error: string)
 	console.log(`Error: ${error}`);
 }
 
-function uploadImage(data)
+function uploadImage(imageData)
 {
-	let xhttpUpload = new XMLHttpRequest();
+	let formData = new FormData();
+	formData.append('files[]', imageData, "image.jpg");
 
-	xhttpUpload.open('POST', 'https://pomf.cat/upload.php');
-	xhttpUpload.onreadystatechange = function ()
-	{
-		if (xhttpUpload.readyState === XMLHttpRequest.DONE && xhttpUpload.status === 200)
+	console.log(formData.get('files[]'));
+
+	let jqXHR = $.ajax(
 		{
-			console.log("I did the thing");
+			url: 'https://pomf.cat/upload.php',
+			type: 'POST',
+			data: formData,
+			cache: false,
+			contentType: false,
+			processData: false,
+			xhr: function ()
+			{
+				var myXhr = $.ajaxSettings.xhr();
+				if (myXhr.upload)
+				{
+					// For handling the progress of the upload
+					myXhr.upload.addEventListener('progress', function (e)
+					{
+						if (e.lengthComputable)
+						{
+							$('progress').attr({
+								value: e.loaded,
+								max: e.total,
+							});
 
-			uploadImage(xhttpUpload.response);
-		}
-	}
-
+							console.log(`Progress: ${e.loaded}, ${e.total}`);
+						}
+					}, false);
+				}
+				return myXhr;
+			}
+		})
+		.done(data =>
+		{
+			console.log("Image upload complete!");
+			console.log(data);
+		})
+		.fail((jqXHR, textStatus, error) =>
+		{
+			console.error(`Image upload failed! ${textStatus}, ${error}`);
+		});
 }
 
 function getImage(url)
 {
-	let jqXHR = $.get(url)
+	$.ajax(
+		{
+			url: url,
+			type: "GET",
+			xhr: function ()
+			{
+				var myXhr = $.ajaxSettings.xhr();
+				myXhr.responseType = "blob";
+				return myXhr;
+			}
+		})
 		.done(data =>
 		{
 			console.log("I did the thing");
