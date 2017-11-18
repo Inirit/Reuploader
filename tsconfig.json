@@ -1,13 +1,12 @@
 {
     "compileOnSave": true,
     "compilerOptions": {
-        "target": "ES2015",
-        "module": "system",
+        "target": "ES2017",
+        "outDir": "js",
         "allowSyntheticDefaultImports": true,
         "allowJs": true,
         "preserveConstEnums": true,
         "removeComments": false,
-        "outDir": "js",
         "watch": true,
         "sourceMap": false,
         "traceResolution": false,
