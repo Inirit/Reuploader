@@ -1,61 +1,8 @@
+import { ImgurHandler } from './handlers/ImgurHandler';
 import { HandlerType } from './handlers/HandlerType';
-import { HandlerBase } from './handlers/HandlerBase';
+import { IHandler } from './handlers/IHandler';
+import { PomfHandler } from './handlers/PomfHandler';
 import * as $ from 'jquery';
-
-class PomfHandler extends HandlerBase
-{
-	private readonly _uploadUrl: string = 'https://pomf.cat/upload.php';
-	private readonly _uploadPrefix: string = 'https://a.pomf.cat/';
-
-	get HandlerType(): HandlerType
-	{
-		return HandlerType.Pomf;
-	}
-
-	public UploadImage(image: Blob, callback: (uploadedUrl: string) => void): void
-	{
-		let formData = new FormData();
-		formData.append('files[]', image, "image.jpg");
-
-		let jqXHR = $.ajax(
-			{
-				url: this._uploadUrl,
-				type: 'POST',
-				data: formData,
-				cache: false,
-				contentType: false,
-				processData: false,
-				xhr: function ()
-				{
-					var myXhr = $.ajaxSettings.xhr();
-					if (myXhr.upload)
-					{
-						myXhr.upload.addEventListener('progress', function (e)
-						{
-							if (e.lengthComputable)
-							{
-								console.debug(`Progress: ${e.loaded}, ${e.total}`);
-							}
-						}, false);
-					}
-					return myXhr;
-				}
-			})
-			.done(data =>
-			{
-				console.debug("Image upload complete!");
-
-				let uploadedFile = data.files[0]
-				let uploadedFileName = uploadedFile.url;
-
-				callback(`${this._uploadPrefix}${uploadedFileName}`);
-			})
-			.fail((jqXHR, textStatus, error) =>
-			{
-				console.error(`Image upload failed! Status: ${textStatus}, Error: ${error}`);
-			});
-	}
-}
 
 function OnCreated()
 {
@@ -68,18 +15,25 @@ function OnCreated()
 	}
 }
 
-function DoSomethingWithNewUrl(uploadedUrl: string)
+function CopyToClipboard(data: string)
 {
-	console.debug(`UploadedUrl: ${uploadedUrl}`);
+	console.debug(`Copying to clipboard: ${data}`);
 
+	// Is this really the best way to do this? Surely there's a more direct way.
 	const input = document.createElement('input');
 	input.style.position = 'fixed';
 	input.style.opacity = '0';
-	input.value = uploadedUrl;
+	input.value = data;
+
 	document.body.appendChild(input);
 	input.select();
 	document.execCommand('Copy');
 	document.body.removeChild(input);
+}
+
+function GetMenuId(handlerType: HandlerType): string
+{
+	return `menuItem_${HandlerType[handlerType]}`;
 }
 
 function Initialize()
@@ -88,32 +42,47 @@ function Initialize()
 
 	browser.contextMenus.create(
 		{
-			id: "reuploadImageMenuItem",
-			title: browser.i18n.getMessage("reuploadImageMenuItemLabel"),
+			id: GetMenuId(HandlerType.Pomf),
+			title: browser.i18n.getMessage("pomfMenuItemLabel"),
+			contexts: ["image"]
+		}, OnCreated);
+
+	browser.contextMenus.create(
+		{
+			id: GetMenuId(HandlerType.Imgur),
+			title: browser.i18n.getMessage("imgurMenuItemLabel"),
 			contexts: ["image"]
 		}, OnCreated);
 
 	browser.contextMenus.onClicked.addListener((info, tab) =>
 	{
+		let handler: IHandler;
+
 		switch (info.menuItemId)
 		{
-			case "reuploadImageMenuItem":
-				if (!info.srcUrl)
-				{
-					console.error(`Image was selected, but src url could not be found!`);
-				}
-				else
-				{
-					console.debug(`Image selected.SrcUrl: ${info.srcUrl}, TabId: ${tab.id}`);
-
-					let handler = new PomfHandler();
-
-					handler.FetchImage(
-						info.srcUrl,
-						(image: Blob) => handler.UploadImage(image, DoSomethingWithNewUrl));
-				}
-
+			case GetMenuId(HandlerType.Pomf):
+				handler = new PomfHandler();
 				break;
+			case GetMenuId(HandlerType.Imgur):
+				console.error(`Handler type '${HandlerType[HandlerType.Imgur]}' is not yet supported`);
+				//handler = new ImgurHandler();
+				break;
+		}
+
+		if (handler)
+		{
+			if (!info.srcUrl)
+			{
+				console.error(`Image was selected, but src url could not be found!`);
+			}
+			else
+			{
+				console.debug(`Image selected, SrcUrl: ${info.srcUrl}, TabId: ${tab.id}`);
+
+				handler.FetchImage(
+					info.srcUrl,
+					(image: Blob) => handler.UploadImage(image, CopyToClipboard));
+			}
 		}
 	});
 

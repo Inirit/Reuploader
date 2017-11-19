@@ -1,6 +1,8 @@
 {
-    "reuploadImageMenuItemLabel": {
-        "message": "Reupload Image",
-        "description": "Reupload the selected image."
+    "pomfMenuItemLabel": {
+        "message": "Reupload Image (Pomf)"
+    },
+    "imgurMenuItemLabel": {
+        "message": "Reupload Image (Imgur)"
     }
 }
