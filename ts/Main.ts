@@ -64,8 +64,7 @@ function Initialize()
 				handler = new PomfHandler();
 				break;
 			case GetMenuId(HandlerType.Imgur):
-				console.error(`Handler type '${HandlerType[HandlerType.Imgur]}' is not yet supported`);
-				//handler = new ImgurHandler();
+				handler = new ImgurHandler();
 				break;
 		}
 

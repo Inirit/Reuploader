@@ -21,7 +21,7 @@ export class PomfHandler extends HandlerBase
 		$.ajax(
 			{
 				url: this._uploadUrl,
-				type: 'POST',
+				method: 'POST',
 				data: formData,
 				cache: false,
 				contentType: false,

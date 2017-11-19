@@ -11,7 +11,7 @@ export abstract class HandlerBase implements IHandler
 		$.ajax(
 			{
 				url: url,
-				type: "GET",
+				method: "GET",
 				xhr: function ()
 				{
 					var myXhr = $.ajaxSettings.xhr();
