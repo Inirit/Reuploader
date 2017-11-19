@@ -9,6 +9,11 @@
             "label": "webpack - watch",
             "type": "shell",
             "command": "webpack -w"
+        },
+        {
+            "label": "web-ext run - developer - 64bit",
+            "type": "shell",
+            "command": "web-ext run --firefox='C:\\Program Files\\Firefox Developer Edition\\firefox.exe' --start-url https://www.google.com --start-url https://upload.wikimedia.org/wikipedia/commons/2/26/YellowLabradorLooking_new.jpg"
         }
     ]
 }

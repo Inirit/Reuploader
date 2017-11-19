@@ -15,6 +15,10 @@ These will need to be installed as command line accessible tools.
 * [npm](https://www.npmjs.com/)
 * [webpack](https://www.npmjs.com/package/webpack)
 
+If using Firefox, an additional tool can be installed.
+
+* [web-ext](https://www.npmjs.com/package/web-ext)
+
 ### Steps
 
 Execute from command line at root directory:
@@ -24,10 +28,15 @@ Execute from command line at root directory:
 
 ## Running
 
-I don't know which browsers the extension currently works on nor do I know how to load a local extension on most of them, I've just been using Firefox for now.
+I do not know how to load a web extension in all browsers nor do I know which browsers this extension currently works with.
 
-* Load the extension in your favorite browser
-* Right click on an image and select the Reupload option
+If using Firefox, you can load a build from the command line.
+
+    > web-ext run
+
+If not using Firefox, you'll have to figure it out.
+
+Once installed, just right click on an image hosted by any webpage and select one of the Reuploader menu items in the context menu.
 
 ## Debugging
 
