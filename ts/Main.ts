@@ -1,3 +1,4 @@
+import { ExtensionOptions } from './options/ExtensionOptions';
 import { ImgurHandler } from './handlers/ImgurHandler';
 import { HandlerType } from './handlers/HandlerType';
 import { IHandler } from './handlers/IHandler';
@@ -42,46 +43,54 @@ function Initialize()
 
 	browser.contextMenus.create(
 		{
-			id: GetMenuId(HandlerType.Pomf),
-			title: browser.i18n.getMessage("pomfMenuItemLabel"),
-			contexts: ["image"]
-		}, OnCreated);
-
-	browser.contextMenus.create(
-		{
-			id: GetMenuId(HandlerType.Imgur),
-			title: browser.i18n.getMessage("imgurMenuItemLabel"),
+			id: "reuploadMenuItem",
+			title: browser.i18n.getMessage("reuploadMenuItemLabel"),
 			contexts: ["image"]
 		}, OnCreated);
 
 	browser.contextMenus.onClicked.addListener((info, tab) =>
 	{
-		let handler: IHandler;
-
-		switch (info.menuItemId)
+		if (info.menuItemId === "reuploadMenuItem")
 		{
-			case GetMenuId(HandlerType.Pomf):
-				handler = new PomfHandler();
-				break;
-			case GetMenuId(HandlerType.Imgur):
-				handler = new ImgurHandler();
-				break;
-		}
-
-		if (handler)
-		{
-			if (!info.srcUrl)
+			browser.storage.local.get(new ExtensionOptions({}).Storage).then(result =>
 			{
-				console.error(`Image was selected, but src url could not be found!`);
-			}
-			else
-			{
-				console.debug(`Image selected, SrcUrl: ${info.srcUrl}, TabId: ${tab.id}`);
+				const currentOptions = new ExtensionOptions(result);
 
-				handler.FetchImage(
-					info.srcUrl,
-					(image: Blob) => handler.UploadImage(image, CopyToClipboard));
-			}
+				let handler: IHandler;
+
+				console.debug(`Storage returned handler type ${HandlerType[currentOptions.HandlerType]}`);
+
+				switch (+currentOptions.HandlerType)
+				{
+					case HandlerType.Imgur:
+						handler = new ImgurHandler();
+						break;
+					case HandlerType.Pomf:
+						handler = new PomfHandler();
+						break;
+					default:
+						console.error(`Unable to select a handler class for handler type ${currentOptions.HandlerType}`);
+						break;
+				}
+
+				if (handler)
+				{
+					console.debug(`Using handler type ${HandlerType[handler.HandlerType]}`);
+
+					if (info.srcUrl)
+					{
+						console.debug(`Image selected, SrcUrl: ${info.srcUrl}, TabId: ${tab.id}`);
+
+						handler.FetchImage(
+							info.srcUrl,
+							(image: Blob) => handler.UploadImage(image, CopyToClipboard));
+					}
+					else
+					{
+						console.error(`Image was selected, but src url could not be found!`);
+					}
+				}
+			});
 		}
 	});
 

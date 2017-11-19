@@ -6,7 +6,7 @@ export abstract class HandlerBase implements IHandler
 	abstract HandlerType: HandlerType;
 	abstract UploadImage(image: Blob, callback: (uploadedUrl: string) => void): void;
 
-	FetchImage(url: string, callback: (image: Blob) => void): void
+	public FetchImage(url: string, callback: (image: Blob) => void): void
 	{
 		$.ajax(
 			{

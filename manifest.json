@@ -11,12 +11,16 @@
     "permissions": [
         "<all_urls>",
         "contextMenus",
-        "clipboardWrite"
+        "clipboardWrite",
+        "storage"
     ],
     "background": {
         "scripts": [
             "node_modules/jquery/dist/jquery.js",
-            "dist/bundle.js"
+            "dist/extension.bundle.js"
         ]
+    },
+    "options_ui": {
+        "page": "html/options.html"
     }
 }

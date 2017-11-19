@@ -13,8 +13,6 @@ export class ImgurHandler extends HandlerBase
 
 	public UploadImage(image: Blob, callback: (uploadedUrl: string) => void): void
 	{
-		console.debug(`Uploading with handler type '${HandlerType[this.HandlerType]}'`);
-
 		const formData = new FormData();
 		formData.append('image', image, "image.jpg");
 

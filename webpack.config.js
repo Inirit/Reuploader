@@ -1,7 +1,10 @@
 module.exports = {
-    entry: "./ts/Main.ts",
+    entry: {
+        extension: "./ts/Main.ts",
+        options: "./ts/options/options.ts"
+    },
     output: {
-        filename: "bundle.js",
+        filename: "[name].bundle.js",
         path: __dirname + "/dist",
     },
     resolve: {

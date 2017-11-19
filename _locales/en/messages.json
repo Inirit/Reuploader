@@ -4,5 +4,8 @@
     },
     "imgurMenuItemLabel": {
         "message": "Reupload Image (Imgur)"
+    },
+    "reuploadMenuItemLabel": {
+        "message": "Reupload Image"
     }
 }

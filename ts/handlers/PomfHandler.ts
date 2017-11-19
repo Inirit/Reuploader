@@ -13,8 +13,6 @@ export class PomfHandler extends HandlerBase
 
 	public UploadImage(image: Blob, callback: (uploadedUrl: string) => void): void
 	{
-		console.debug(`Uploading with handler type '${this.HandlerType}'`);
-
 		const formData = new FormData();
 		formData.append('files[]', image, "image.jpg");
 
