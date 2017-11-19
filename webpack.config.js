@@ -16,7 +16,6 @@ module.exports = {
     externals: {
         "jquery": "$"
     },
-    watch: true,
     watchOptions: {
         ignored: /node_modules/
     }
