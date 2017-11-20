@@ -2,7 +2,15 @@
 
 A web extension for quickly and easily rehosting images.
 
-Still in early development, plus I don't know how to make web extensions.
+## Status
+
+* Nov. 19
+  * Basic feature set is now implemented.
+  * Nothing has been published yet, but I'm hoping to do so soon.
+  * Code still needs some cleanup
+* Nov. 15
+  * Still in early development, plus I don't know how to make web extensions.
+  * I hate JavaScript.
 
 ## Building
 
