@@ -35,6 +35,7 @@ function CopyToClipboard(data: string)
 		"copy_complete", {
 			"type": "basic",
 			"title": "Reuploader",
+			"iconUrl": "./images/notification.png",
 			"message": `Copied ${data} to clipboard`
 		}
 	).then(id =>

@@ -20,6 +20,7 @@ export class ImgurHandler extends HandlerBase
 			"reupload_progress", {
 				"type": "basic",
 				"title": `Reploader`,
+				"iconUrl": "./images/notification.png",
 				"message": `Reploading to ${HandlerType[this.HandlerType]}...`
 			}
 		).then(notificationId =>
@@ -73,6 +74,7 @@ export class ImgurHandler extends HandlerBase
 						"reupload_failed", {
 							"type": "basic",
 							"title": `Reploader`,
+							"iconUrl": "./images/notification.png",
 							"message": `Failed to upload image. ${textStatus} ${error}`
 						}
 					).then(failId =>

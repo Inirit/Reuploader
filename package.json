@@ -17,9 +17,11 @@
         "url": "https://github.com/Inirit/Reuploader.git"
     },
     "dependencies": {
-        "jquery": "^3.2.1"
+        "jquery": "^3.2.1",
+        "webextension-polyfill": "^0.2.1"
     },
     "devDependencies": {
+        "@types/chrome": "0.0.54",
         "@types/jquery": "^3.2.16",
         "awesome-typescript-loader": "^3.3.0",
         "source-map-loader": "^0.2.3",
