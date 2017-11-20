@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Reuploader",
-    "version": "1.0.0prealpha",
+    "version": "1.0.0alpha",
     "default_locale": "en",
     "description": "A web extension for quickly and easily rehosting images.",
     "developer": {
