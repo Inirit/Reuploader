@@ -16,42 +16,72 @@ export class PomfHandler extends HandlerBase
 		const formData = new FormData();
 		formData.append('files[]', image, "image.jpg");
 
-		$.ajax(
-			{
-				url: this._uploadUrl,
-				method: 'POST',
-				data: formData,
-				cache: false,
-				contentType: false,
-				processData: false,
-				xhr: function ()
+		browser.notifications.create(
+			"reupload_progress", {
+				"type": "basic",
+				"title": `Reploader`,
+				"message": `Reploading to ${HandlerType[this.HandlerType]}...`
+			}
+		).then(notificationId =>
+		{
+			$.ajax(
 				{
-					var myXhr = $.ajaxSettings.xhr();
-					if (myXhr.upload)
+					url: this._uploadUrl,
+					method: 'POST',
+					data: formData,
+					cache: false,
+					contentType: false,
+					processData: false,
+					xhr: function ()
 					{
-						myXhr.upload.addEventListener('progress', function (e)
+						var myXhr = $.ajaxSettings.xhr();
+
+						if (myXhr.upload)
 						{
-							if (e.lengthComputable)
+							myXhr.upload.addEventListener('progress', function (e)
 							{
-								console.debug(`Progress: ${e.loaded}, ${e.total}`);
-							}
-						}, false);
+								if (e.lengthComputable)
+								{
+									const percentage = e.loaded / e.total;
+
+									console.debug(`Progress: ${percentage}%`);
+								}
+							}, false);
+						}
+
+						return myXhr;
 					}
-					return myXhr;
-				}
-			})
-			.done(data =>
-			{
-				console.debug("Image upload complete!");
+				}).always(() =>
+				{
+					browser.notifications.clear(notificationId);
+				})
+				.done(data =>
+				{
+					console.debug("Image upload complete!");
 
-				const uploadedFile = data.files[0]
-				const uploadedFileName = uploadedFile.url;
+					const uploadedFile = data.files[0];
+					const uploadedFileName = uploadedFile.url;
 
-				callback(`${this._uploadPrefix}${uploadedFileName}`);
-			})
-			.fail((jqXHR, textStatus, error) =>
-			{
-				console.error(`Image upload failed! Status: ${textStatus}, Error: ${error}`);
-			});
+					callback(`${this._uploadPrefix}${uploadedFileName}`);
+				})
+				.fail((jqXHR, textStatus, error) =>
+				{
+					browser.notifications.create(
+						"reupload_failed", {
+							"type": "basic",
+							"title": `Reploader`,
+							"message": `Failed to upload image. ${textStatus} ${error}`
+						}
+					).then(failId =>
+					{
+						setTimeout(() =>
+						{
+							console.debug(`Clearing notification with id ${failId}`);
+
+							browser.notifications.clear(failId);
+						}, 10000);
+					})
+				})
+		});
 	}
 }

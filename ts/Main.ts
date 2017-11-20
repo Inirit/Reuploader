@@ -30,6 +30,22 @@ function CopyToClipboard(data: string)
 	input.select();
 	document.execCommand('Copy');
 	document.body.removeChild(input);
+
+	browser.notifications.create(
+		"copy_complete", {
+			"type": "basic",
+			"title": "Reuploader",
+			"message": `Copied ${data} to clipboard`
+		}
+	).then(id =>
+	{
+		setTimeout(() =>
+		{
+			console.debug(`Clearing notification with id ${id}`);
+
+			browser.notifications.clear(id);
+		}, 5000);
+	});
 }
 
 function GetMenuId(handlerType: HandlerType): string

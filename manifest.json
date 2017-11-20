@@ -12,7 +12,8 @@
         "<all_urls>",
         "contextMenus",
         "clipboardWrite",
-        "storage"
+        "storage",
+        "notifications"
     ],
     "background": {
         "scripts": [
