@@ -18,7 +18,16 @@ export class ExtensionOptions
 
 	get HandlerType(): HandlerType
 	{
-		return this._storage["HandlerType"] as HandlerType;
+		const value = this._storage["HandlerType"];
+
+		if (value)
+		{
+			return value as HandlerType;
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	set HandlerType(value: HandlerType)
