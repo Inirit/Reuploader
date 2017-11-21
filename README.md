@@ -2,8 +2,16 @@
 
 A web extension for quickly and easily rehosting images.
 
+## Release
+
+Currently released as an alpha and only for Firefox. May support other browsers later.
+
+* [Firefox](https://addons.mozilla.org/en-US/firefox/addon/reuploader/)
+
 ## Status
 
+* Nov. 20
+  * Alpha release has been published to Firefox addon hub
 * Nov. 19
   * Basic feature set is now implemented.
   * Nothing has been published yet, but I'm hoping to do so soon.
