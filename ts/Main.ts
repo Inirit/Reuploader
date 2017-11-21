@@ -16,10 +16,8 @@ function OnCreated()
 	}
 }
 
-function CopyToClipboard(data: string)
+async function CopyToClipboard(data: string)
 {
-	console.debug(`Copying to clipboard: ${data}`);
-
 	// Is this really the best way to do this? Surely there's a more direct way.
 	const input = document.createElement('input');
 	input.style.position = 'fixed';
@@ -31,27 +29,36 @@ function CopyToClipboard(data: string)
 	document.execCommand('Copy');
 	document.body.removeChild(input);
 
-	browser.notifications.create(
+	const notificationId = await browser.notifications.create(
 		"copy_complete", {
 			"type": "basic",
 			"title": browser.i18n.getMessage("extensionName"),
 			"iconUrl": "./images/up_arrow.png",
 			"message": browser.i18n.getMessage("notificationMessageCopyToClipboard", data)
 		}
-	).then(id =>
-	{
-		setTimeout(() =>
-		{
-			console.debug(`Clearing notification with id ${id}`);
+	);
 
-			browser.notifications.clear(id);
-		}, 5000);
-	});
+	setTimeout(() =>
+	{
+		browser.notifications.clear(notificationId);
+	}, 5000);
 }
 
-function GetMenuId(handlerType: HandlerType): string
+async function HandleGeneralError(errorMessage: string)
 {
-	return `menuItem_${HandlerType[handlerType]}`;
+	const notificationId = await browser.notifications.create(
+		"reupload_failed", {
+			"type": "basic",
+			"title": browser.i18n.getMessage("extensionName"),
+			"iconUrl": "./images/up_arrow.png",
+			"message": `${errorMessage}`
+		}
+	);
+
+	setTimeout(() =>
+	{
+		browser.notifications.clear(notificationId);
+	}, 10000);
 }
 
 function Initialize()
@@ -75,8 +82,6 @@ function Initialize()
 
 				let handler: IHandler;
 
-				console.debug(`Storage returned handler type ${HandlerType[currentOptions.HandlerType]}`);
-
 				switch (+currentOptions.HandlerType)
 				{
 					case HandlerType.Imgur:
@@ -86,25 +91,21 @@ function Initialize()
 						handler = new PomfHandler();
 						break;
 					default:
-						console.error(`Unable to select a handler class for handler type ${currentOptions.HandlerType}`);
+						HandleGeneralError(browser.i18n.getMessage("errorHandlerTypeNotSupported", HandlerType[currentOptions.HandlerType]));
 						break;
 				}
 
 				if (handler)
 				{
-					console.debug(`Using handler type ${HandlerType[handler.HandlerType]}`);
-
 					if (info.srcUrl)
 					{
-						console.debug(`Image selected, SrcUrl: ${info.srcUrl}, TabId: ${tab.id}`);
-
-						handler.FetchImage(
-							info.srcUrl,
-							(image: Blob) => handler.UploadImage(image, CopyToClipboard));
+						handler.ReuploadImage(info.srcUrl).then(uploadedUrl =>
+							CopyToClipboard(uploadedUrl)
+						);
 					}
 					else
 					{
-						console.error(`Image was selected, but src url could not be found!`);
+						HandleGeneralError(browser.i18n.getMessage("errorImageSourceUrl"));
 					}
 				}
 			});

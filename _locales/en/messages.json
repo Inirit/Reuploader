@@ -19,10 +19,43 @@
         }
     },
     "notificationMessageCopyToClipboard": {
-        "message": "Copied $data$ to clipboard",
+        "message": "Copied $data$ to clipboard.",
         "placeholders": {
             "data": {
                 "content": "$1"
+            }
+        }
+    },
+    "errorImageSourceUrl": {
+        "message": "Unable to find the source url for the selected image."
+    },
+    "errorHandlerTypeNotSupported": {
+        "message": "Handler type $handler$ is not supported.",
+        "placeholders": {
+            "handler": {
+                "content": "$1"
+            }
+        }
+    },
+    "errorImageFailedToDownload": {
+        "message": "Failed to download image. $textStatus$ $error$",
+        "placeholders": {
+            "textStatus": {
+                "content": "$1"
+            },
+            "error": {
+                "content": "$2"
+            }
+        }
+    },
+    "errorImageFailedToUpload": {
+        "message": "Failed to upload image. $textStatus$ $error$",
+        "placeholders": {
+            "textStatus": {
+                "content": "$1"
+            },
+            "error": {
+                "content": "$2"
             }
         }
     }

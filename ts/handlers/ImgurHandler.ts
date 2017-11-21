@@ -11,82 +11,42 @@ export class ImgurHandler extends HandlerBase
 		return HandlerType.Imgur;
 	}
 
-	public UploadImage(image: Blob, callback: (uploadedUrl: string) => void): void
+	public async HandleUpload(image: Blob): Promise<string>
 	{
 		const formData = new FormData();
 		formData.append('image', image, "image.jpg");
 
-		browser.notifications.create(
-			"reupload_progress", {
-				"type": "basic",
-				"title": browser.i18n.getMessage("extensionName"),
-				"iconUrl": "./images/up_arrow.png",
-				"message": browser.i18n.getMessage("notificationMessageReuploadProgress", HandlerType[this.HandlerType])
-			}
-		).then(notificationId =>
-		{
-			$.ajax(
+		let uploadedUrl: string;
+
+		await $.ajax(
+			{
+				url: this._uploadUrl,
+				method: 'POST',
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
+				headers: {
+					Authorization: `Client-ID ${this._clientId}`,
+					Accept: 'application/json'
+				},
+				xhr: this.GetUploadXhr
+			}).then(result =>
+			{
+				if (result && result.data && result.data.link)
 				{
-					url: this._uploadUrl,
-					method: 'POST',
-					data: formData,
-					cache: false,
-					contentType: false,
-					processData: false,
-					headers: {
-						Authorization: `Client-ID ${this._clientId}`,
-						Accept: 'application/json'
-					},
-					xhr: function ()
-					{
-						var myXhr = $.ajaxSettings.xhr();
-
-						if (myXhr.upload)
-						{
-							myXhr.upload.addEventListener('progress', function (e)
-							{
-								if (e.lengthComputable)
-								{
-									const percentage = (e.loaded / e.total) * 100;
-
-									console.debug(`Progress: ${percentage}%`);
-								}
-							}, false);
-						}
-
-						return myXhr;
-					}
-				}).always(() =>
+					uploadedUrl = result.data.link;
+				}
+				else
 				{
-					browser.notifications.clear(notificationId);
-				})
-				.done(result =>
-				{
-					console.debug("Image upload complete!");
+					this.HandleGeneralError("Failed to upload image, unexpected response format from service.");
+				}
+			},
+			(jqXHR, textStatus, error) =>
+			{
+				this.HandleUploadError(jqXHR, textStatus, error);
+			});
 
-					const link: string = result.data.link;
-
-					callback(link);
-				})
-				.fail((jqXHR, textStatus, error) =>
-				{
-					browser.notifications.create(
-						"reupload_failed", {
-							"type": "basic",
-							"title": browser.i18n.getMessage("extensionName"),
-							"iconUrl": "./images/up_arrow.png",
-							"message": `Failed to upload image. ${textStatus} ${error}`
-						}
-					).then(failId =>
-					{
-						setTimeout(() =>
-						{
-							console.debug(`Clearing notification with id ${failId}`);
-
-							browser.notifications.clear(failId);
-						}, 10000);
-					})
-				});
-		});
+		return uploadedUrl;
 	}
 }

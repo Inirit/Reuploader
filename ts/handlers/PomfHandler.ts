@@ -11,79 +11,41 @@ export class PomfHandler extends HandlerBase
 		return HandlerType.Pomf;
 	}
 
-	public UploadImage(image: Blob, callback: (uploadedUrl: string) => void): void
+	public async HandleUpload(image: Blob): Promise<string>
 	{
 		const formData = new FormData();
 		formData.append('files[]', image, "image.jpg");
 
-		browser.notifications.create(
-			"reupload_progress", {
-				"type": "basic",
-				"title": browser.i18n.getMessage("extensionName"),
-				"iconUrl": "./images/up_arrow.png",
-				"message": browser.i18n.getMessage("notificationMessageReuploadProgress", HandlerType[this.HandlerType])
-			}
-		).then(notificationId =>
-		{
-			$.ajax(
+		let uploadedUrl: string;
+
+		await $.ajax(
+			{
+				url: this._uploadUrl,
+				method: 'POST',
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
+				xhr: this.GetUploadXhr
+			}).then(data =>
+			{
+				if (data && data.files)
 				{
-					url: this._uploadUrl,
-					method: 'POST',
-					data: formData,
-					cache: false,
-					contentType: false,
-					processData: false,
-					xhr: function ()
-					{
-						var myXhr = $.ajaxSettings.xhr();
-
-						if (myXhr.upload)
-						{
-							myXhr.upload.addEventListener('progress', function (e)
-							{
-								if (e.lengthComputable)
-								{
-									const percentage = e.loaded / e.total;
-
-									console.debug(`Progress: ${percentage}%`);
-								}
-							}, false);
-						}
-
-						return myXhr;
-					}
-				}).always(() =>
-				{
-					browser.notifications.clear(notificationId);
-				})
-				.done(data =>
-				{
-					console.debug("Image upload complete!");
-
 					const uploadedFile = data.files[0];
 					const uploadedFileName = uploadedFile.url;
 
-					callback(`${this._uploadPrefix}${uploadedFileName}`);
-				})
-				.fail((jqXHR, textStatus, error) =>
+					uploadedUrl = `${this._uploadPrefix}${uploadedFileName}`;
+				}
+				else
 				{
-					browser.notifications.create(
-						"reupload_failed", {
-							"type": "basic",
-							"title": browser.i18n.getMessage("extensionName"),
-							"iconUrl": "./images/up_arrow.png",
-							"message": `Failed to upload image. ${textStatus} ${error}`
-						}
-					).then(failId =>
-					{
-						setTimeout(() =>
-						{
-							console.debug(`Clearing notification with id ${failId}`);
+					this.HandleGeneralError("Failed to upload image, unexpected response format from service.");
+				}
+			},
+			(jqXHR, textStatus, error) =>
+			{
+				this.HandleUploadError(jqXHR, textStatus, error);
+			});
 
-							browser.notifications.clear(failId);
-						}, 10000);
-					})
-				})
-		});
+		return uploadedUrl;
 	}
 }

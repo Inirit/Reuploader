@@ -4,7 +4,5 @@ export interface IHandler
 {
 	HandlerType: HandlerType;
 
-	UploadImage(image: Blob, callback: (uploadedUrl: string) => void): void;
-
-	FetchImage(url: string, callback: (image: Blob) => void): void;
+	ReuploadImage(originalImageUrl: string): Promise<string>;
 }
