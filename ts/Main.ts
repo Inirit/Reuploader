@@ -34,9 +34,9 @@ function CopyToClipboard(data: string)
 	browser.notifications.create(
 		"copy_complete", {
 			"type": "basic",
-			"title": "Reuploader",
-			"iconUrl": "./images/notification.png",
-			"message": `Copied ${data} to clipboard`
+			"title": browser.i18n.getMessage("extensionName"),
+			"iconUrl": "./images/up_arrow.png",
+			"message": browser.i18n.getMessage("notificationMessageCopyToClipboard", data)
 		}
 	).then(id =>
 	{

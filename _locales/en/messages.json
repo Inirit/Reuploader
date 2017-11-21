@@ -1,11 +1,29 @@
 {
-    "pomfMenuItemLabel": {
-        "message": "Reupload Image (Pomf)"
+    "extensionName": {
+        "message": "Reuploader",
+        "description": "Name of the extension."
     },
-    "imgurMenuItemLabel": {
-        "message": "Reupload Image (Imgur)"
+    "extensionDescription": {
+        "message": "A web extension for quickly and easily rehosting images.",
+        "description": "Description of the extension."
     },
     "reuploadMenuItemLabel": {
         "message": "Reupload Image"
+    },
+    "notificationMessageReuploadProgress": {
+        "message": "Reuploading to $handler$...",
+        "placeholders": {
+            "handler": {
+                "content": "$1"
+            }
+        }
+    },
+    "notificationMessageCopyToClipboard": {
+        "message": "Copied $data$ to clipboard",
+        "placeholders": {
+            "data": {
+                "content": "$1"
+            }
+        }
     }
 }

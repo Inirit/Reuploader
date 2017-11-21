@@ -19,9 +19,9 @@ export class ImgurHandler extends HandlerBase
 		browser.notifications.create(
 			"reupload_progress", {
 				"type": "basic",
-				"title": `Reploader`,
-				"iconUrl": "./images/notification.png",
-				"message": `Reploading to ${HandlerType[this.HandlerType]}...`
+				"title": browser.i18n.getMessage("extensionName"),
+				"iconUrl": "./images/up_arrow.png",
+				"message": browser.i18n.getMessage("notificationMessageReuploadProgress", HandlerType[this.HandlerType])
 			}
 		).then(notificationId =>
 		{
@@ -73,8 +73,8 @@ export class ImgurHandler extends HandlerBase
 					browser.notifications.create(
 						"reupload_failed", {
 							"type": "basic",
-							"title": `Reploader`,
-							"iconUrl": "./images/notification.png",
+							"title": browser.i18n.getMessage("extensionName"),
+							"iconUrl": "./images/up_arrow.png",
 							"message": `Failed to upload image. ${textStatus} ${error}`
 						}
 					).then(failId =>
