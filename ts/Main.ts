@@ -100,7 +100,12 @@ function Initialize()
 					if (info.srcUrl)
 					{
 						handler.ReuploadImage(info.srcUrl).then(uploadedUrl =>
-							CopyToClipboard(uploadedUrl)
+						{
+							if (uploadedUrl)
+							{
+								CopyToClipboard(uploadedUrl);
+							}
+						}
 						);
 					}
 					else
