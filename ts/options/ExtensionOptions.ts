@@ -1,24 +1,42 @@
 import { HandlerType } from '../handlers/HandlerType';
 
-export class ExtensionOptions
+
+
+export interface IExtensionOptions
 {
-	private readonly _defaultHandlerType: HandlerType = HandlerType.Imgur;
+	HandlerType: HandlerType;
 
-	private readonly _storage: browser.storage.StorageObject;
+	RawStorage: browser.storage.StorageObject;
+}
 
-	constructor(storage: browser.storage.StorageObject)
+export class ExtensionOptions implements IExtensionOptions
+{
+	private static readonly _defaultOptions: browser.storage.StorageObject = {
+		"HandlerType": HandlerType.Imgur
+	};
+
+	private readonly _currentOptions: browser.storage.StorageObject;
+
+	constructor(options: browser.storage.StorageObject)
 	{
-		this._storage = storage;
+		this._currentOptions = options;
+	}
 
-		if (!this.HandlerType)
-		{
-			this.HandlerType = this._defaultHandlerType;
-		}
+	public static async GetCurrentOptions(): Promise<IExtensionOptions>
+	{
+		const options = await browser.storage.local.get(this._defaultOptions);
+
+		return new ExtensionOptions(options);
+	}
+
+	public static async UpdateCurrentOptions(options: IExtensionOptions)
+	{
+		await browser.storage.local.set(options.RawStorage);
 	}
 
 	get HandlerType(): HandlerType
 	{
-		const value = this._storage["HandlerType"];
+		const value = this._currentOptions["HandlerType"];
 
 		if (value)
 		{
@@ -32,11 +50,11 @@ export class ExtensionOptions
 
 	set HandlerType(value: HandlerType)
 	{
-		this._storage["HandlerType"] = value;
+		this._currentOptions["HandlerType"] = value;
 	}
 
-	get Storage(): browser.storage.StorageObject
+	get RawStorage(): browser.storage.StorageObject
 	{
-		return this._storage;
+		return this._currentOptions;
 	}
 }

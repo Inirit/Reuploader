@@ -18,7 +18,7 @@ export abstract class HandlerBase implements IHandler
 	protected async UploadImage(image: Blob): Promise<string>
 	{
 		const notificationId = await browser.notifications.create(
-			"reupload_progress", {
+			`reupload_progress_${Date.now()}`, {
 				"type": "basic",
 				"title": browser.i18n.getMessage("extensionName"),
 				"iconUrl": "./images/up_arrow.png",
@@ -93,7 +93,7 @@ export abstract class HandlerBase implements IHandler
 	protected async HandleGeneralError(errorMessage: string)
 	{
 		const notificationId = await browser.notifications.create(
-			"reupload_failed", {
+			`reupload_failed_${Date.now()}`, {
 				"type": "basic",
 				"title": browser.i18n.getMessage("extensionName"),
 				"iconUrl": "./images/up_arrow.png",

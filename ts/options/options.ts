@@ -2,17 +2,16 @@ import { ExtensionOptions } from './ExtensionOptions';
 import { HandlerType } from '../handlers/HandlerType';
 import * as $ from 'jquery';
 
-function SaveOptions(e)
+async function SaveOptions(e)
 {
-	const options = new ExtensionOptions({});
-	options.HandlerType = $("#handlers").val() as number;
+	const currentOptions = await ExtensionOptions.GetCurrentOptions();
 
-	console.debug(`Saving options: HandlerType ${HandlerType[options.HandlerType]}`);
+	currentOptions.HandlerType = $("#handlers").val() as number;
 
-	browser.storage.local.set(options.Storage);
+	await ExtensionOptions.UpdateCurrentOptions(currentOptions);
 }
 
-function InitializeOptionsForm()
+async function InitializeOptionsForm()
 {
 	console.debug("Initializing options form");
 
@@ -23,18 +22,15 @@ function InitializeOptionsForm()
 	{
 		optionElement.append($(`<option value="${handler}">${HandlerType[handler]}</option>`));
 	});
+
+	const currentOptions = await ExtensionOptions.GetCurrentOptions();
+
+	$(`option[value=${currentOptions.HandlerType}]`).prop("selected", true); 0
+
+	document.querySelector("form").addEventListener("submit", SaveOptions);
 }
 
-$(document).ready(function ()
+$(document).ready(() =>
 {
 	InitializeOptionsForm();
-
-	browser.storage.local.get(new ExtensionOptions({}).Storage).then(result =>
-	{
-		const currentOptions = new ExtensionOptions(result);
-
-		$(`option[value=${currentOptions.HandlerType}]`).prop("selected", true);
-
-		document.querySelector("form").addEventListener("submit", SaveOptions);
-	});
 });

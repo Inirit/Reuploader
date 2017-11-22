@@ -5,14 +5,11 @@ import { IHandler } from './handlers/IHandler';
 import { PomfHandler } from './handlers/PomfHandler';
 import * as $ from 'jquery';
 
-function OnCreated()
+function HandleOnCreated()
 {
 	if (browser.runtime.lastError)
 	{
 		console.error(`Error: ${browser.runtime.lastError}`);
-	} else
-	{
-		console.debug("Item created successfully");
 	}
 }
 
@@ -30,7 +27,7 @@ async function CopyToClipboard(data: string)
 	document.body.removeChild(input);
 
 	const notificationId = await browser.notifications.create(
-		"copy_complete", {
+		`copy_complete_${Date.now()}`, {
 			"type": "basic",
 			"title": browser.i18n.getMessage("extensionName"),
 			"iconUrl": "./images/up_arrow.png",
@@ -47,7 +44,7 @@ async function CopyToClipboard(data: string)
 async function HandleGeneralError(errorMessage: string)
 {
 	const notificationId = await browser.notifications.create(
-		"reupload_failed", {
+		`reupload_failed_${Date.now()}`, {
 			"type": "basic",
 			"title": browser.i18n.getMessage("extensionName"),
 			"iconUrl": "./images/up_arrow.png",
@@ -61,7 +58,49 @@ async function HandleGeneralError(errorMessage: string)
 	}, 10000);
 }
 
-function Initialize()
+async function HandleReuploadOnClick(info: browser.contextMenus.OnClickData, tab: browser.tabs.Tab)
+{
+	if (info.menuItemId === "reuploadMenuItem")
+	{
+		const currentOptions = await ExtensionOptions.GetCurrentOptions();
+
+		let handler: IHandler;
+
+		switch (+currentOptions.HandlerType)
+		{
+			case HandlerType.Imgur:
+				handler = new ImgurHandler();
+				break;
+			case HandlerType.Pomf:
+				handler = new PomfHandler();
+				break;
+			default:
+				HandleGeneralError(browser.i18n.getMessage("errorHandlerTypeNotSupported", HandlerType[currentOptions.HandlerType]));
+				break;
+		}
+
+		if (handler)
+		{
+			if (info.srcUrl)
+			{
+				handler.ReuploadImage(info.srcUrl).then(uploadedUrl =>
+				{
+					if (uploadedUrl)
+					{
+						CopyToClipboard(uploadedUrl);
+					}
+				}
+				);
+			}
+			else
+			{
+				HandleGeneralError(browser.i18n.getMessage("errorImageSourceUrl"));
+			}
+		}
+	}
+}
+
+async function Initialize()
 {
 	console.debug(`Initializing...`);
 
@@ -70,52 +109,9 @@ function Initialize()
 			id: "reuploadMenuItem",
 			title: browser.i18n.getMessage("reuploadMenuItemLabel"),
 			contexts: ["image"]
-		}, OnCreated);
+		}, (HandleOnCreated));
 
-	browser.contextMenus.onClicked.addListener((info, tab) =>
-	{
-		if (info.menuItemId === "reuploadMenuItem")
-		{
-			browser.storage.local.get(new ExtensionOptions({}).Storage).then(result =>
-			{
-				const currentOptions = new ExtensionOptions(result);
-
-				let handler: IHandler;
-
-				switch (+currentOptions.HandlerType)
-				{
-					case HandlerType.Imgur:
-						handler = new ImgurHandler();
-						break;
-					case HandlerType.Pomf:
-						handler = new PomfHandler();
-						break;
-					default:
-						HandleGeneralError(browser.i18n.getMessage("errorHandlerTypeNotSupported", HandlerType[currentOptions.HandlerType]));
-						break;
-				}
-
-				if (handler)
-				{
-					if (info.srcUrl)
-					{
-						handler.ReuploadImage(info.srcUrl).then(uploadedUrl =>
-						{
-							if (uploadedUrl)
-							{
-								CopyToClipboard(uploadedUrl);
-							}
-						}
-						);
-					}
-					else
-					{
-						HandleGeneralError(browser.i18n.getMessage("errorImageSourceUrl"));
-					}
-				}
-			});
-		}
-	});
+	browser.contextMenus.onClicked.addListener(HandleReuploadOnClick);
 
 	console.debug(`Initialization complete.`);
 }
