@@ -16,16 +16,16 @@ async function InitializeOptionsForm()
 	console.debug("Initializing options form");
 
 	const handlers = [HandlerType.Imgur, HandlerType.Pomf]
-	const optionElement = $("#handlers");
+	const handlersSelectElement = $("#handlers");
 
 	handlers.forEach(handler =>
 	{
-		optionElement.append($(`<option value="${handler}">${HandlerType[handler]}</option>`));
+		handlersSelectElement.append($(`<option class="options" value="${handler}">${HandlerType[handler]}</option>`));
 	});
 
 	const currentOptions = await ExtensionOptions.GetCurrentOptions();
 
-	$(`option[value=${currentOptions.HandlerType}]`).prop("selected", true); 0
+	$(`option[value=${currentOptions.HandlerType}]`).prop("selected", true);
 
 	document.querySelector("form").addEventListener("submit", SaveOptions);
 }
