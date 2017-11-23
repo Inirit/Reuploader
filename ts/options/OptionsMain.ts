@@ -4,9 +4,11 @@ import * as $ from 'jquery';
 
 async function SaveOptions(e)
 {
+	e.preventDefault();
+
 	const currentOptions = await ExtensionOptions.GetCurrentOptions();
 
-	currentOptions.HandlerType = $("#handlers").val() as number;
+	currentOptions.HandlerType = $("#handlers").val() as HandlerType;
 
 	await ExtensionOptions.UpdateCurrentOptions(currentOptions);
 }

@@ -1,7 +1,5 @@
 import { HandlerType } from '../handlers/HandlerType';
 
-
-
 export interface IExtensionOptions
 {
 	HandlerType: HandlerType;
@@ -12,7 +10,7 @@ export interface IExtensionOptions
 export class ExtensionOptions implements IExtensionOptions
 {
 	private static readonly _defaultOptions: browser.storage.StorageObject = {
-		"HandlerType": HandlerType.Imgur
+		"HandlerType": `${HandlerType.Imgur}`
 	};
 
 	private readonly _currentOptions: browser.storage.StorageObject;
@@ -50,7 +48,7 @@ export class ExtensionOptions implements IExtensionOptions
 
 	set HandlerType(value: HandlerType)
 	{
-		this._currentOptions["HandlerType"] = value;
+		this._currentOptions["HandlerType"] = `${value}`;
 	}
 
 	get RawStorage(): browser.storage.StorageObject
