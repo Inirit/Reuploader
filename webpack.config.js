@@ -1,7 +1,8 @@
 module.exports = {
     entry: {
-        extension: "./ts/Main.ts",
-        options: "./ts/options/options.ts"
+        background: "./ts/BackgroundMain.ts",
+        content: "./ts/ContentMain.ts",
+        options: "./ts/options/OptionsMain.ts"
     },
     output: {
         filename: "[name].bundle.js",

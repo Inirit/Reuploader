@@ -13,34 +13,6 @@ function HandleOnCreated()
 	}
 }
 
-async function CopyToClipboard(data: string)
-{
-	// Is this really the best way to do this? Surely there's a more direct way.
-	const input = document.createElement('input');
-	input.style.position = 'fixed';
-	input.style.opacity = '0';
-	input.value = data;
-
-	document.body.appendChild(input);
-	input.select();
-	document.execCommand('Copy');
-	document.body.removeChild(input);
-
-	const notificationId = await browser.notifications.create(
-		`copy_complete_${Date.now()}`, {
-			"type": "basic",
-			"title": browser.i18n.getMessage("extensionName"),
-			"iconUrl": "./images/up_arrow.png",
-			"message": browser.i18n.getMessage("notificationMessageCopyToClipboard", data)
-		}
-	);
-
-	setTimeout(() =>
-	{
-		browser.notifications.clear(notificationId);
-	}, 5000);
-}
-
 async function HandleGeneralError(errorMessage: string)
 {
 	const notificationId = await browser.notifications.create(
@@ -83,14 +55,26 @@ async function HandleReuploadOnClick(info: browser.contextMenus.OnClickData, tab
 		{
 			if (info.srcUrl)
 			{
-				handler.ReuploadImage(info.srcUrl).then(uploadedUrl =>
+				const uploadedUrl = await handler.ReuploadImage(info.srcUrl);
+
+				if (uploadedUrl)
 				{
-					if (uploadedUrl)
+					await browser.tabs.sendMessage(tab.id, { "url": uploadedUrl });
+
+					const notificationId = await browser.notifications.create(
+						`copy_complete_${Date.now()}`, {
+							"type": "basic",
+							"title": browser.i18n.getMessage("extensionName"),
+							"iconUrl": "./images/up_arrow.png",
+							"message": browser.i18n.getMessage("notificationMessageCopyToClipboard", uploadedUrl)
+						}
+					);
+
+					setTimeout(() =>
 					{
-						CopyToClipboard(uploadedUrl);
-					}
+						browser.notifications.clear(notificationId);
+					}, 5000);
 				}
-				);
 			}
 			else
 			{
@@ -99,6 +83,7 @@ async function HandleReuploadOnClick(info: browser.contextMenus.OnClickData, tab
 		}
 	}
 }
+
 
 async function Initialize()
 {
