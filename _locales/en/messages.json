@@ -58,5 +58,11 @@
                 "content": "$2"
             }
         }
+    },
+    "optionsHandlersLabel": {
+        "message": "Upload Service: "
+    },
+    "optionsSave": {
+        "message": "Save"
     }
 }

@@ -13,6 +13,11 @@ export class ExtensionOptions implements IExtensionOptions
 		"HandlerType": `${HandlerType.Imgur}`
 	};
 
+	public static EnabledHandlers: HandlerType[] = [
+		HandlerType.Imgur,
+		HandlerType.Pomf
+	];
+
 	private readonly _currentOptions: browser.storage.StorageObject;
 
 	constructor(options: browser.storage.StorageObject)

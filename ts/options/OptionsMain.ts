@@ -1,8 +1,8 @@
-import { ExtensionOptions } from './ExtensionOptions';
+import { ExtensionOptions, IExtensionOptions } from './ExtensionOptions';
 import { HandlerType } from '../handlers/HandlerType';
 import * as $ from 'jquery';
 
-async function SaveOptions(e)
+async function HandleSaveOptions(e)
 {
 	e.preventDefault();
 
@@ -13,23 +13,45 @@ async function SaveOptions(e)
 	await ExtensionOptions.UpdateCurrentOptions(currentOptions);
 }
 
-async function InitializeOptionsForm()
+async function InitializeHandlersOptions(currentOptions: IExtensionOptions)
 {
-	console.debug("Initializing options form");
-
-	const handlers = [HandlerType.Imgur, HandlerType.Pomf]
+	const handlersLabelElement = $("#handlers-label");
 	const handlersSelectElement = $("#handlers");
 
-	handlers.forEach(handler =>
+	handlersLabelElement.prepend(browser.i18n.getMessage("optionsHandlersLabel"));
+
+	ExtensionOptions.EnabledHandlers.forEach(handler =>
 	{
 		handlersSelectElement.append($(`<option class="options" value="${handler}">${HandlerType[handler]}</option>`));
 	});
 
-	const currentOptions = await ExtensionOptions.GetCurrentOptions();
-
 	$(`option[value=${currentOptions.HandlerType}]`).prop("selected", true);
+}
 
-	document.querySelector("form").addEventListener("submit", SaveOptions);
+function InitializeSaveButton()
+{
+	const saveElement = $("#save");
+	saveElement.text(browser.i18n.getMessage("optionsSave"));
+}
+
+function UnhideOptionsForm()
+{
+	const formElement = $("form.options");
+	formElement.submit(HandleSaveOptions);
+	formElement.addClass("unhidden");
+	formElement.removeClass("hidden");
+}
+
+async function InitializeOptionsForm()
+{
+	console.debug("Initializing options form...");
+
+	const currentOptions = await ExtensionOptions.GetCurrentOptions();
+	await InitializeHandlersOptions(currentOptions);
+	InitializeSaveButton();
+	UnhideOptionsForm();
+
+	console.debug("Options form initialized!");
 }
 
 $(document).ready(() =>
