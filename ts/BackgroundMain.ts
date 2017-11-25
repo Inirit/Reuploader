@@ -3,6 +3,7 @@ import { ImgurHandler } from './handlers/ImgurHandler';
 import { HandlerType } from './handlers/HandlerType';
 import { IHandler } from './handlers/IHandler';
 import { PomfHandler } from './handlers/PomfHandler';
+import { PostImageHandler } from './handlers/PostImage';
 import * as $ from 'jquery';
 
 function HandleOnCreated()
@@ -45,6 +46,9 @@ async function HandleReuploadOnClick(info: browser.contextMenus.OnClickData, tab
 				break;
 			case HandlerType.Pomf:
 				handler = new PomfHandler();
+				break;
+			case HandlerType.PostImage:
+				handler = new PostImageHandler();
 				break;
 			default:
 				HandleGeneralError(browser.i18n.getMessage("errorHandlerTypeNotSupported", HandlerType[currentOptions.HandlerType]));

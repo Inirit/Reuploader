@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "__MSG_extensionName__",
-    "version": "1.0.0.4",
+    "version": "1.0.0.5",
     "default_locale": "en",
     "description": "__MSG_extensionDescription__",
     "developer": {
@@ -19,6 +19,7 @@
         "scripts": [
             "node_modules/jquery/dist/jquery.js",
             "node_modules/webextension-polyfill/dist/browser-polyfill.js",
+            "node_modules/blob-util/dist/blob-util.js",
             "dist/background.bundle.js"
         ]
     },

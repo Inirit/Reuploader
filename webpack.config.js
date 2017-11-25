@@ -18,7 +18,8 @@ module.exports = {
         ]
     },
     externals: {
-        "jquery": "$"
+        "jquery": "$",
+        "blob-util": "blobUtil"
     },
     watchOptions: {
         ignored: /node_modules/

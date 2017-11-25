@@ -1,5 +1,6 @@
 export enum HandlerType
 {
 	Pomf,
-	Imgur
+	Imgur,
+	PostImage
 }

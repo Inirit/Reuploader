@@ -15,7 +15,8 @@ export class ExtensionOptions implements IExtensionOptions
 
 	public static EnabledHandlers: HandlerType[] = [
 		HandlerType.Imgur,
-		HandlerType.Pomf
+		HandlerType.Pomf,
+		HandlerType.PostImage
 	];
 
 	private readonly _currentOptions: browser.storage.StorageObject;
