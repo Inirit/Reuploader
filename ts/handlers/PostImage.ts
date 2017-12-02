@@ -2,8 +2,43 @@ import { HandlerBase } from './HandlerBase';
 import { HandlerType } from './HandlerType';
 import * as blobUtil from 'blob-util'
 
+/*
+The functionality for this service is based on the network traffic from their Windows screen cap tool:
+http://postimages.org/app.
+*/
+
+class PostImageData
+{
+	// Probably just an API key assigned to their screen cap tool
+	public key: string = "8ca0b57a6bb9c4c33cd9e7ab8e6a7f05";
+
+	// I don't know what this is
+	public o: string = "2b819584285c102318568238c7d4a4c7";
+
+	// I don't know what this is
+	public m: string = "fb733cccce28e7db3ff9f17d7ccff3d1";
+
+	// API usage can be denied based on version number, may need to update this in the future
+	public version: string = "1.0.1";
+
+	// Name of the image after being uploaded
+	public name: string = "image";
+
+	// This doesn't seem to matter (e.g. a png will be uploaded as a png), but the value is required.
+	public type: string = "jpg";
+
+	// The image data as a base64 string
+	public image: string;
+
+	constructor(imageBase64: string)
+	{
+		this.image = imageBase64;
+	}
+}
+
 export class PostImageHandler extends HandlerBase
 {
+	// Determined by observing network traffic from their screencap tool
 	private readonly _uploadUrl: string = 'http://api.postimage.org/1/upload';
 
 	get HandlerType(): HandlerType
@@ -14,18 +49,7 @@ export class PostImageHandler extends HandlerBase
 	public async HandleUpload(image: Blob): Promise<string>
 	{
 		const dataUrl = await blobUtil.blobToBase64String(image);
-
-		const uploadData =
-			{
-				key: "8ca0b57a6bb9c4c33cd9e7ab8e6a7f05",
-				o: "2b819584285c102318568238c7d4a4c7",
-				m: "fb733cccce28e7db3ff9f17d7ccff3d1",
-				version: "1.0.1",
-				name: "image",
-				type: "jpg",
-				image: dataUrl
-			}
-
+		const uploadData = new PostImageData(dataUrl);
 		let uploadedUrl: string;
 
 		await $.ajax(
@@ -45,6 +69,9 @@ export class PostImageHandler extends HandlerBase
 				}
 				else
 				{
+					console.error("Upload to PostImage faile but with a successful status code, potentially requires updating handling.");
+					console.error(data);
+
 					this.HandleGeneralError("Failed to upload image due to an unknown error.");
 				}
 			},
