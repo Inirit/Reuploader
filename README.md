@@ -1,6 +1,6 @@
 # Reuploader
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/70acff441d81487380ae4923d0f819f3)](https://www.codacy.com/app/Inirit/Reuploader?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Inirit/Reuploader&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/Inirit/Reuploader.svg?branch=master)](https://travis-ci.org/Inirit/Reuploader) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/70acff441d81487380ae4923d0f819f3)](https://www.codacy.com/app/Inirit/Reuploader?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Inirit/Reuploader&amp;utm_campaign=Badge_Grade)
 
 A web extension for quickly and easily rehosting images.
 
