@@ -1,6 +1,7 @@
-import { ExtensionOptions, IExtensionOptions } from './ExtensionOptions';
-import { HandlerType } from '../handlers/HandlerType';
-import * as $ from 'jquery';
+import * as $ from "jquery";
+
+import { HandlerType } from "../handlers/HandlerType";
+import { ExtensionOptions, IExtensionOptions } from "./ExtensionOptions";
 
 async function HandleSaveOptions(e)
 {
@@ -15,14 +16,14 @@ async function HandleSaveOptions(e)
 
 async function InitializeHandlersOptions(currentOptions: IExtensionOptions)
 {
-	const handlersLabelElement = $("#handlers-label");
+	const handlersLabelElement = $("#handlers-select-container");
 	const handlersSelectElement = $("#handlers");
 
 	handlersLabelElement.prepend(browser.i18n.getMessage("optionsHandlersLabel"));
 
 	ExtensionOptions.EnabledHandlers.forEach(handler =>
 	{
-		handlersSelectElement.append($(`<option class="options" value="${handler}">${HandlerType[handler]}</option>`));
+		handlersSelectElement.append($(`<option value="${handler}">${HandlerType[handler]}</option>`));
 	});
 
 	$(`option[value=${currentOptions.HandlerType}]`).prop("selected", true);
@@ -30,16 +31,16 @@ async function InitializeHandlersOptions(currentOptions: IExtensionOptions)
 
 function InitializeSaveButton()
 {
-	const saveElement = $("#save");
+	const saveElement = $("#handlers-save");
 	saveElement.text(browser.i18n.getMessage("optionsSave"));
+	saveElement.click(HandleSaveOptions);
 }
 
 function UnhideOptionsForm()
 {
-	const formElement = $("form.options");
-	formElement.submit(HandleSaveOptions);
-	formElement.addClass("unhidden");
-	formElement.removeClass("hidden");
+	const bodyContainerElement = $("#body-container");
+	bodyContainerElement.addClass("unhidden");
+	bodyContainerElement.removeClass("hidden");
 }
 
 async function InitializeOptionsForm()

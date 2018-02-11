@@ -1,24 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html class="filled">
 
 <head>
-    <title>Options</title>
-    <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="../css/options.css">
-    <script src="../node_modules/jquery/dist/jquery.js"></script>
-    <script src="../node_modules/webextension-polyfill/dist/browser-polyfill.js"></script>
-    <script src="../dist/options.bundle.js"></script>
+	<title>Options</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="../css/options.css">
+	<script src="../node_modules/jquery/dist/jquery.js"></script>
+	<script src="../node_modules/webextension-polyfill/dist/browser-polyfill.js"></script>
+	<script src="../dist/options.bundle.js"></script>
 </head>
 
-<body>
-    <form class="options hidden">
-        <label class="options" id="handlers-label">
-			<select class="options" id="handlers"></select>
-		</label>
-        <br>
-        <br>
-        <button class="options" id="save" type="submit">Save</button>
-    </form>
+<body class="filled">
+	<div id="body-container" class="flex-container flex-row filled hidden">
+		<div id="handlers-form-container" class="flex-container filled flex-column">
+			<h1>Options</h1>
+			<div class="spacer-vertical"></div>
+			<div id="handlers-select-container">
+				<select id="handlers"></select>
+			</div>
+			<div class="spacer-vertical"></div>
+			<div class="spacer-vertical"></div>
+			<div class="spacer-vertical"></div>
+			<div id="handlers-save-container">
+				<button id="handlers-save" type="submit">Save</button>
+			</div>
+		</div>
+		<div id="imgur-options-container" class="flex-container filled flex-column">
+			<h1>Imgur Options</h1>
+			<div id="imgur-auth-label">
+				<button id="imgur-auth" type="button">Authenticate</button>
+			</div>
+		</div>
+		<div id="none-options-container" hidden>
+
+		</div>
+	</div>
 </body>
 
 </html>

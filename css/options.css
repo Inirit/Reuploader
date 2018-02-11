@@ -7,8 +7,38 @@
     }
 }
 
+body {
+	margin: 0;
+	font-size: 16px;
+	/*background-color: blue*/
+}
+
+select {
+	font-size: 16px;
+}
+
+button {
+	font-size: 16px;
+}
+
+h1 {
+	font-weight: normal;
+	margin: 0;
+	padding: 0;
+}
+
+.spacer-vertical {
+	height: 16px;
+	width: 100%;
+}
+
 .hidden {
     opacity: 0.0;
+}
+
+.filled {
+	height: 100%;
+	width: 100%;
 }
 
 .unhidden {
@@ -17,6 +47,39 @@
     animation-duration: 0.25s;
 }
 
-.options {
-    font-size: 16px;
+.flex-container {
+	display: flex;
+}
+
+.flex-row {
+	flex-direction: row;
+}
+
+.flex-column {
+	flex-direction: column;
+}
+
+#handlers-form {
+	height: 100%;
+	width: 100%;
+	/*background-color: red*/
+}
+
+#handlers-form-container {
+	flex: 100;
+	/*background-color: purple;*/
+}
+
+#imgur-options-container {
+	flex: 100;
+	/*background-color: cyan;*/
+}
+
+#none-options-container {
+	flex: 100;
+	/*background-color: black;*/
+}
+
+#body-container {
+	min-height: 400px;
 }
