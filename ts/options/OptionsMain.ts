@@ -16,10 +16,10 @@ async function HandleSaveOptions(e)
 
 async function InitializeHandlersOptions(currentOptions: IExtensionOptions)
 {
-	const handlersLabelElement = $("#handlers-select-container");
+	const handlersLabelElement = $("#menu-handler-select-container");
 	const handlersSelectElement = $("#handlers");
 
-	handlersLabelElement.prepend(browser.i18n.getMessage("optionsHandlersLabel"));
+	handlersLabelElement.prepend(browser.i18n.getMessage("optionsMenuHandlerSelectionLabel"));
 
 	ExtensionOptions.EnabledHandlers.forEach(handler =>
 	{
@@ -31,31 +31,63 @@ async function InitializeHandlersOptions(currentOptions: IExtensionOptions)
 
 function InitializeSaveButton()
 {
-	const saveElement = $("#handlers-save");
-	saveElement.text(browser.i18n.getMessage("optionsSave"));
-	saveElement.click(HandleSaveOptions);
+
 }
 
-function UnhideOptionsForm()
+function UnhideBody()
 {
 	const bodyContainerElement = $("#body-container");
 	bodyContainerElement.addClass("unhidden");
 	bodyContainerElement.removeClass("hidden");
 }
 
-async function InitializeOptionsForm()
+function InitializeMainMenu()
 {
-	console.debug("Initializing options form...");
+	// Menu title
+	const menuTitle = $("#menu-title");
+	menuTitle.text(browser.i18n.getMessage("optionsMenuTitle"));
+
+	// Save button
+	const saveButton = $("#menu-save-button");
+	saveButton.text(browser.i18n.getMessage("optionsSaveButton"));
+	saveButton.click(HandleSaveOptions);
+}
+
+function HandleImgurAuth(e)
+{
+	e.preventDefault();
+
+	console.debug("Imgur auth... ");
+}
+
+function InitializeImgurMenu()
+{
+	// Imgur menu title
+	const imgurMenuTitle = $("#imgur-menu-title");
+	imgurMenuTitle.text(browser.i18n.getMessage("optionsImgurMenuTitle"));
+
+	// Imgur auth button
+	const imgurAuthButton = $("#imgur-auth-button");
+	imgurAuthButton.text(browser.i18n.getMessage("optionsImgurMenuAuthButton"));
+	imgurAuthButton.click(HandleImgurAuth);
+}
+
+async function InitializeOptions()
+{
+	console.debug("Initializing options...");
 
 	const currentOptions = await ExtensionOptions.GetCurrentOptions();
 	await InitializeHandlersOptions(currentOptions);
-	InitializeSaveButton();
-	UnhideOptionsForm();
 
-	console.debug("Options form initialized!");
+	InitializeMainMenu();
+	InitializeImgurMenu();
+
+	UnhideBody();
+
+	console.debug("Options initialized!");
 }
 
 $(document).ready(() =>
 {
-	InitializeOptionsForm();
+	InitializeOptions();
 });

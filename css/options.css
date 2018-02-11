@@ -59,23 +59,17 @@ h1 {
 	flex-direction: column;
 }
 
-#handlers-form {
-	height: 100%;
-	width: 100%;
-	/*background-color: red*/
-}
-
-#handlers-form-container {
+#menu-container {
 	flex: 100;
 	/*background-color: purple;*/
 }
 
-#imgur-options-container {
+#imgur-menu-container {
 	flex: 100;
 	/*background-color: cyan;*/
 }
 
-#none-options-container {
+#none-menu-container {
 	flex: 100;
 	/*background-color: black;*/
 }
