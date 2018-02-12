@@ -13,7 +13,8 @@ class ImgurHandler extends HandlerBase
 
 	public async HandleUpload(image: Blob): Promise<string>
 	{
-		const clientId = await ImgurOptions.ClientId;
+		const authorizationHeader = await this.GetAuthorizationHeader();
+
 		const formData = new FormData();
 		formData.append("image", image, "image.jpg");
 
@@ -28,7 +29,7 @@ class ImgurHandler extends HandlerBase
 				contentType: false,
 				processData: false,
 				headers: {
-					Authorization: `Client-ID ${clientId}`,
+					Authorization: authorizationHeader,
 					Accept: "application/json"
 				},
 				xhr: this.GetUploadXhr
@@ -49,6 +50,28 @@ class ImgurHandler extends HandlerBase
 			});
 
 		return uploadedUrl;
+	}
+
+	private async GetAuthorizationHeader(): Promise<string>
+	{
+		let authorizationHeader: string;
+		const accessToken = await ImgurOptions.GetAccessToken();
+
+		if (accessToken)
+		{
+			authorizationHeader = `Bearer ${accessToken}`;
+
+			console.debug(`Using access token for Imgur upload`);
+		}
+		else
+		{
+			const clientId = await ImgurOptions.ClientId;
+			authorizationHeader = `Client-ID ${clientId}`;
+
+			console.debug(`Using client id for Imgur upload`);
+		}
+
+		return authorizationHeader;
 	}
 }
 
