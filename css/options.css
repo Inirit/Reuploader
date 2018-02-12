@@ -80,4 +80,5 @@ h1 {
 
 #body-container {
 	min-height: 400px;
+	min-width: 600px;
 }
