@@ -1,8 +1,10 @@
-import { HandlerType } from '../handlers/HandlerType';
+import { HandlerType } from "../handlers/HandlerType";
 
 export interface IExtensionOptions
 {
 	HandlerType: HandlerType;
+
+	ImgurAuthKey: string;
 
 	RawStorage: browser.storage.StorageObject;
 }
@@ -55,6 +57,25 @@ export class ExtensionOptions implements IExtensionOptions
 	set HandlerType(value: HandlerType)
 	{
 		this._currentOptions["HandlerType"] = `${value}`;
+	}
+
+	get ImgurAuthKey(): string
+	{
+		const value = this._currentOptions["ImgurAuthKey"];
+
+		if (value)
+		{
+			return value as string;
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	set ImgurAuthKey(value: string)
+	{
+		this._currentOptions["ImgurAuthKey"] = `${value}`;
 	}
 
 	get RawStorage(): browser.storage.StorageObject

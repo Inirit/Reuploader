@@ -27,11 +27,27 @@ async function InitializeHandlersOptions(currentOptions: IExtensionOptions)
 	});
 
 	$(`option[value=${currentOptions.HandlerType}]`).prop("selected", true);
+
+	handlersSelectElement.change(SetSecondaryMenu)
 }
 
-function InitializeSaveButton()
+function SetSecondaryMenu()
 {
+	const handlerType = $("#handlers").val() as HandlerType;
 
+	const noneOptions = $("#none-menu-container");
+	const imgurOptions = $("#imgur-menu-container-container");
+
+	if (handlerType == HandlerType.Imgur)
+	{
+		imgurOptions.removeClass("display-none");
+		noneOptions.addClass("display-none");
+	}
+	else
+	{
+		imgurOptions.addClass("display-none");
+		noneOptions.removeClass("display-none");
+	}
 }
 
 function UnhideBody()
@@ -53,11 +69,32 @@ function InitializeMainMenu()
 	saveButton.click(HandleSaveOptions);
 }
 
-function HandleImgurAuth(e)
+async function HandleImgurAuth(e)
 {
 	e.preventDefault();
 
 	console.debug("Imgur auth... ");
+
+	const redirectURL = browser.identity.getRedirectURL();
+
+	console.debug(redirectURL);
+
+	const token = await browser.identity.launchWebAuthFlow({
+		url: `https://api.imgur.com/oauth2/authorize?response_type=token&client_id=4a4f81163ed1219&redirect_uri=${encodeURIComponent(redirectURL)}`,
+		interactive: true
+	});
+
+	const currentOptions = await ExtensionOptions.GetCurrentOptions();
+	currentOptions.ImgurAuthKey = token;
+
+	await ExtensionOptions.UpdateCurrentOptions(currentOptions);
+
+	const imgurNotAuthContainer = $("#imgur-not-authenticated-container");
+	imgurNotAuthContainer.addClass("display-none");
+
+	const imgurAuthContainer = $("#imgur-authenticated-container");
+	imgurAuthContainer.text(currentOptions.ImgurAuthKey);
+	imgurAuthContainer.removeClass("display-none");
 }
 
 function InitializeImgurMenu()
@@ -81,6 +118,7 @@ async function InitializeOptions()
 
 	InitializeMainMenu();
 	InitializeImgurMenu();
+	SetSecondaryMenu();
 
 	UnhideBody();
 

@@ -1,5 +1,5 @@
-import { HandlerBase } from './HandlerBase';
-import { HandlerType } from './HandlerType';
+import { HandlerBase } from "./HandlerBase";
+import { HandlerType } from "./HandlerType";
 
 export class ImgurHandler extends HandlerBase
 {

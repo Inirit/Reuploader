@@ -25,14 +25,21 @@
 				<button id="menu-save-button" type="submit"></button>
 			</div>
 		</div>
-		<div id="imgur-menu-container" class="flex-container filled flex-column">
-			<h1 id="imgur-menu-title"></h1>
-			<div class="spacer-vertical"></div>
-			<div id="imgur-auth-label">
-				<button id="imgur-auth-button" type="button"></button>
+		<div id="imgur-menu-container-container" class="filled">
+			<div id="imgur-menu-container" class="flex-container filled flex-column">
+				<h1 id="imgur-menu-title"></h1>
+				<div class="spacer-vertical"></div>
+				<div id="imgur-not-authenticated-container">
+					<div id="imgur-auth-container">
+						<button id="imgur-auth-button" type="button"></button>
+					</div>
+				</div>
+				<div id="imgur-authenticated-container" class="display-none">
+					Authenticated
+				</div>
 			</div>
 		</div>
-		<div id="none-menu-container" hidden>
+		<div id="none-menu-container" class="display-none">
 
 		</div>
 	</div>
