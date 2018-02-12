@@ -6,14 +6,16 @@ A web extension for quickly and easily rehosting images.
 
 ## Release
 
-Currently released as an alpha and only for Firefox. May support other browsers later.
+Currently released for Firefox. May support other browsers later.
 
 * [Firefox](https://addons.mozilla.org/en-US/firefox/addon/reuploader/)
 
 ## Status
 
+* Feb. 11 2018
+  * Removed the "experimental" tag on Firefox addon hub, it seems to be pretty stable.
 * Nov. 20
-  * Alpha release has been published to Firefox addon hub
+  * Alpha release has been published to Firefox addon hub.
 * Nov. 19
   * Basic feature set is now implemented.
   * Nothing has been published yet, but I'm hoping to do so soon.
@@ -44,18 +46,12 @@ Execute from command line at root directory:
     > npm install
     > webpack
 
-## Running
+### Running
 
-I do not know how to load a web extension in all browsers nor do I know which browsers this extension currently works with.
+Every browser is different, so you'll have to consult their documentation on how to load a temporary extension.
 
-If using Firefox, you can load a build from the command line.
+Once the extension is installed in the browser, just right click on an image hosted by any webpage and select the Reuploader menu item in the context menu.
 
-    > web-ext run
+### Debugging
 
-If not using Firefox, you'll have to figure it out.
-
-Once installed, just right click on an image hosted by any webpage and select one of the Reuploader menu items in the context menu.
-
-## Debugging
-
-I don't know, just do print debugging or something. Maybe your browser's developer console will let you step through the transpiled JavaScript, it may even let you monitor network traffic from the extension if you're lucky.
+I've had a difficult time trying to debug the extension when temporarily installed in Firefox. The "Browser Toolbox" seems to show some runtime info, but it's not great. Unfortunately I mostly just fall back on print debugging.
