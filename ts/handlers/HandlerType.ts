@@ -1,6 +1,8 @@
-export enum HandlerType
+enum HandlerType
 {
 	Pomf,
 	Imgur,
 	PostImage
 }
+
+export default HandlerType;

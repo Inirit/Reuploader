@@ -1,32 +1,33 @@
 import * as $ from "jquery";
 
-import { HandlerType } from "../handlers/HandlerType";
-import { ExtensionOptions, IExtensionOptions } from "./ExtensionOptions";
+import HandlerType from "../handlers/HandlerType";
+import ImgurOptions from "./ImgurOptions";
+import PrimaryOptions from "./PrimaryOptions";
 
 async function HandleSaveOptions(e)
 {
 	e.preventDefault();
 
-	const currentOptions = await ExtensionOptions.GetCurrentOptions();
+	const currentHandlerType = $("#handlers").val() as HandlerType;
 
-	currentOptions.HandlerType = $("#handlers").val() as HandlerType;
-
-	await ExtensionOptions.UpdateCurrentOptions(currentOptions);
+	await PrimaryOptions.SetHandlerType(currentHandlerType);
 }
 
-async function InitializeHandlersOptions(currentOptions: IExtensionOptions)
+async function InitializeHandlersOptions()
 {
 	const handlersLabelElement = $("#menu-handler-select-container");
 	const handlersSelectElement = $("#handlers");
 
 	handlersLabelElement.prepend(browser.i18n.getMessage("optionsMenuHandlerSelectionLabel"));
 
-	ExtensionOptions.EnabledHandlers.forEach(handler =>
+	PrimaryOptions.EnabledHandlers.forEach(handler =>
 	{
 		handlersSelectElement.append($(`<option value="${handler}">${HandlerType[handler]}</option>`));
 	});
 
-	$(`option[value=${currentOptions.HandlerType}]`).prop("selected", true);
+	const currentHandlerType = await PrimaryOptions.GetHandlerType();
+
+	$(`option[value=${currentHandlerType}]`).prop("selected", true);
 
 	handlersSelectElement.change(SetSecondaryMenu)
 }
@@ -37,6 +38,8 @@ function SetSecondaryMenu()
 
 	const noneOptions = $("#none-menu-container");
 	const imgurOptions = $("#imgur-menu-container-container");
+
+	const a = "";
 
 	if (handlerType == HandlerType.Imgur)
 	{
@@ -76,28 +79,50 @@ async function HandleImgurAuth(e)
 	console.debug("Imgur auth... ");
 
 	const redirectURL = browser.identity.getRedirectURL();
-
-	console.debug(redirectURL);
-
-	const token = await browser.identity.launchWebAuthFlow({
+	const response = await browser.identity.launchWebAuthFlow({
 		url: `https://api.imgur.com/oauth2/authorize?response_type=token&client_id=4a4f81163ed1219&redirect_uri=${encodeURIComponent(redirectURL)}`,
 		interactive: true
 	});
 
-	const currentOptions = await ExtensionOptions.GetCurrentOptions();
-	currentOptions.ImgurAuthKey = token;
+	const decodedResponse = decodeURIComponent(response);
 
-	await ExtensionOptions.UpdateCurrentOptions(currentOptions);
+	console.debug(`Decoded response: ${decodedResponse}`);
 
-	const imgurNotAuthContainer = $("#imgur-not-authenticated-container");
-	imgurNotAuthContainer.addClass("display-none");
+	await ImgurOptions.SetAuthInfo(decodedResponse);
 
-	const imgurAuthContainer = $("#imgur-authenticated-container");
-	imgurAuthContainer.text(currentOptions.ImgurAuthKey);
-	imgurAuthContainer.removeClass("display-none");
+	await SetImgurMenuState();
 }
 
-function InitializeImgurMenu()
+async function HandleImgurUnauth(e)
+{
+	e.preventDefault();
+
+	console.debug("Imgur unauth... ");
+
+	await ImgurOptions.SetAuthInfo(undefined);
+	await SetImgurMenuState();
+}
+
+async function SetImgurMenuState()
+{
+	let toHide = $("#imgur-authenticated-container");
+	let toUnhide = $("#imgur-not-authenticated-container");
+
+	if (await ImgurOptions.GetAccessToken())
+	{
+		const temp = toHide;
+		toHide = toUnhide;
+		toUnhide = temp;
+
+		$("#imgur-account-info").text(`${await ImgurOptions.GetAccountName()} (${await ImgurOptions.GetAccountId()})`);
+		$("#imgur-auth-info").text(`${await ImgurOptions.GetAccessToken()}`);
+	}
+
+	toHide.addClass("display-none");
+	toUnhide.removeClass("display-none");
+}
+
+async function InitializeImgurMenu()
 {
 	// Imgur menu title
 	const imgurMenuTitle = $("#imgur-menu-title");
@@ -107,17 +132,23 @@ function InitializeImgurMenu()
 	const imgurAuthButton = $("#imgur-auth-button");
 	imgurAuthButton.text(browser.i18n.getMessage("optionsImgurMenuAuthButton"));
 	imgurAuthButton.click(HandleImgurAuth);
+
+	// Imgur unauth button
+	const imgurUnauthButton = $("#imgur-unauth-button");
+	imgurUnauthButton.text(browser.i18n.getMessage("optionsImgurMenuUnauthButton"));
+	imgurUnauthButton.click(HandleImgurUnauth);
+
+	await SetImgurMenuState();
 }
 
 async function InitializeOptions()
 {
 	console.debug("Initializing options...");
 
-	const currentOptions = await ExtensionOptions.GetCurrentOptions();
-	await InitializeHandlersOptions(currentOptions);
+	await InitializeHandlersOptions();
 
 	InitializeMainMenu();
-	InitializeImgurMenu();
+	await InitializeImgurMenu();
 	SetSecondaryMenu();
 
 	UnhideBody();

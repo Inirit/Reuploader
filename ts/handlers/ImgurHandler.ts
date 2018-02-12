@@ -1,10 +1,10 @@
-import { HandlerBase } from "./HandlerBase";
-import { HandlerType } from "./HandlerType";
+import ImgurOptions from "../options/ImgurOptions";
+import HandlerBase from "./HandlerBase";
+import HandlerType from "./HandlerType";
 
-export class ImgurHandler extends HandlerBase
+class ImgurHandler extends HandlerBase
 {
 	private readonly _uploadUrl: string = "https://api.imgur.com/3/image";
-	private readonly _clientId: string = "4a4f81163ed1219";
 
 	get HandlerType(): HandlerType
 	{
@@ -13,22 +13,23 @@ export class ImgurHandler extends HandlerBase
 
 	public async HandleUpload(image: Blob): Promise<string>
 	{
+		const clientId = await ImgurOptions.ClientId;
 		const formData = new FormData();
-		formData.append('image', image, "image.jpg");
+		formData.append("image", image, "image.jpg");
 
 		let uploadedUrl: string;
 
 		await $.ajax(
 			{
 				url: this._uploadUrl,
-				method: 'POST',
+				method: "POST",
 				data: formData,
 				cache: false,
 				contentType: false,
 				processData: false,
 				headers: {
-					Authorization: `Client-ID ${this._clientId}`,
-					Accept: 'application/json'
+					Authorization: `Client-ID ${clientId}`,
+					Accept: "application/json"
 				},
 				xhr: this.GetUploadXhr
 			}).then(result =>
@@ -50,3 +51,5 @@ export class ImgurHandler extends HandlerBase
 		return uploadedUrl;
 	}
 }
+
+export default ImgurHandler;

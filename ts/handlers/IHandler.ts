@@ -1,8 +1,10 @@
-import { HandlerType } from './HandlerType';
+import HandlerType from "./HandlerType";
 
-export interface IHandler
+interface IHandler
 {
 	HandlerType: HandlerType;
 
 	ReuploadImage(originalImageUrl: string): Promise<string>;
 }
+
+export default IHandler;

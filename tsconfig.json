@@ -1,23 +1,21 @@
 {
-    "compileOnSave": true,
-    "compilerOptions": {
-        "target": "ES2017",
-        "outDir": "js",
-        "allowSyntheticDefaultImports": true,
-        "allowJs": true,
-        "removeComments": true,
-        "sourceMap": true,
-        "traceResolution": false,
-        "moduleResolution": "node",
-        "baseUrl": ".",
-        "paths": {},
-        "typeRoots": [
-            "@types",
-            "node_modules/@types",
-            "node_modules/web-ext-types"
-        ]
-    },
-    "include": [
-        "ts/**/*"
-    ]
+	"compilerOptions": {
+		"target": "ES2017",
+		"outDir": "js",
+		"allowJs": true,
+		"removeComments": true,
+		"sourceMap": true,
+		"traceResolution": false,
+		"moduleResolution": "node",
+		"baseUrl": ".",
+		"paths": {},
+		"typeRoots": [
+			"@types",
+			"node_modules/@types",
+			"node_modules/web-ext-types"
+		]
+	},
+	"include": [
+		"ts/**/*"
+	]
 }

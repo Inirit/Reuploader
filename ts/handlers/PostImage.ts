@@ -1,6 +1,7 @@
-import { HandlerBase } from './HandlerBase';
-import { HandlerType } from './HandlerType';
-import * as blobUtil from 'blob-util'
+import * as blobUtil from "blob-util";
+
+import HandlerBase from "./HandlerBase";
+import HandlerType from "./HandlerType";
 
 /*
 The functionality for this service is based on the network traffic from their Windows screen cap tool:
@@ -36,7 +37,7 @@ class PostImageData
 	}
 }
 
-export class PostImageHandler extends HandlerBase
+class PostImageHandler extends HandlerBase
 {
 	// Determined by observing network traffic from their screencap tool
 	private readonly _uploadUrl: string = 'http://api.postimage.org/1/upload';
@@ -83,3 +84,5 @@ export class PostImageHandler extends HandlerBase
 		return uploadedUrl;
 	}
 }
+
+export default PostImageHandler;

@@ -30,12 +30,23 @@
 				<h1 id="imgur-menu-title"></h1>
 				<div class="spacer-vertical"></div>
 				<div id="imgur-not-authenticated-container">
-					<div id="imgur-auth-container">
+					<div>
 						<button id="imgur-auth-button" type="button"></button>
 					</div>
+
 				</div>
 				<div id="imgur-authenticated-container" class="display-none">
-					Authenticated
+					<div id="imgur-account-info-container">Account:
+						<div id="imgur-account-info"></div>
+					</div>
+					<div class="spacer-vertical"></div>
+					<div id="imgur-auth-info-container">Auth:
+						<div id="imgur-auth-info"></div>
+					</div>
+					<div class="spacer-vertical"></div>
+					<div>
+						<button id="imgur-unauth-button" type="button"></button>
+					</div>
 				</div>
 			</div>
 		</div>

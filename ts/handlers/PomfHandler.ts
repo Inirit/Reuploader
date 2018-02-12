@@ -1,10 +1,10 @@
-import { HandlerBase } from './HandlerBase';
-import { HandlerType } from './HandlerType';
+import HandlerBase from "./HandlerBase";
+import HandlerType from "./HandlerType";
 
-export class PomfHandler extends HandlerBase
+class PomfHandler extends HandlerBase
 {
-	private readonly _uploadUrl: string = 'https://pomf.cat/upload.php';
-	private readonly _uploadPrefix: string = 'https://a.pomf.cat/';
+	private readonly _uploadUrl: string = "https://pomf.cat/upload.php";
+	private readonly _uploadPrefix: string = "https://a.pomf.cat/";
 
 	get HandlerType(): HandlerType
 	{
@@ -14,14 +14,14 @@ export class PomfHandler extends HandlerBase
 	public async HandleUpload(image: Blob): Promise<string>
 	{
 		const formData = new FormData();
-		formData.append('files[]', image, "image.jpg");
+		formData.append("files[]", image, "image.jpg");
 
 		let uploadedUrl: string;
 
 		await $.ajax(
 			{
 				url: this._uploadUrl,
-				method: 'POST',
+				method: "POST",
 				data: formData,
 				cache: false,
 				contentType: false,
@@ -49,3 +49,5 @@ export class PomfHandler extends HandlerBase
 		return uploadedUrl;
 	}
 }
+
+export default PomfHandler;

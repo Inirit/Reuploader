@@ -1,7 +1,7 @@
-import { IHandler } from './IHandler';
-import { HandlerType } from './HandlerType';
+import HandlerType from "./HandlerType";
+import IHandler from "./IHandler";
 
-export abstract class HandlerBase implements IHandler
+abstract class HandlerBase implements IHandler
 {
 	abstract HandlerType: HandlerType;
 
@@ -117,3 +117,5 @@ export abstract class HandlerBase implements IHandler
 		await this.HandleGeneralError(browser.i18n.getMessage("errorImageFailedToDownload", [textStatus, error]));
 	}
 }
+
+export default HandlerBase;

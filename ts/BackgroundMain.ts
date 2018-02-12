@@ -1,10 +1,9 @@
-import { ExtensionOptions } from './options/ExtensionOptions';
-import { ImgurHandler } from './handlers/ImgurHandler';
-import { HandlerType } from './handlers/HandlerType';
-import { IHandler } from './handlers/IHandler';
-import { PomfHandler } from './handlers/PomfHandler';
-import { PostImageHandler } from './handlers/PostImage';
-import * as $ from 'jquery';
+import HandlerType from "./handlers/HandlerType";
+import IHandler from "./handlers/IHandler";
+import ImgurHandler from "./handlers/ImgurHandler";
+import PomfHandler from "./handlers/PomfHandler";
+import PostImageHandler from "./handlers/PostImage";
+import PrimaryOptions from "./options/PrimaryOptions";
 
 function HandleOnCreated()
 {
@@ -35,11 +34,10 @@ async function HandleReuploadOnClick(info: browser.contextMenus.OnClickData, tab
 {
 	if (info.menuItemId === "reuploadMenuItem")
 	{
-		const currentOptions = await ExtensionOptions.GetCurrentOptions();
-
+		const currentHandler = await PrimaryOptions.GetHandlerType();
 		let handler: IHandler;
 
-		switch (+currentOptions.HandlerType)
+		switch (+currentHandler)
 		{
 			case HandlerType.Imgur:
 				handler = new ImgurHandler();
@@ -51,7 +49,7 @@ async function HandleReuploadOnClick(info: browser.contextMenus.OnClickData, tab
 				handler = new PostImageHandler();
 				break;
 			default:
-				HandleGeneralError(browser.i18n.getMessage("errorHandlerTypeNotSupported", HandlerType[currentOptions.HandlerType]));
+				HandleGeneralError(browser.i18n.getMessage("errorHandlerTypeNotSupported", HandlerType[currentHandler]));
 				break;
 		}
 
