@@ -1,13 +1,3 @@
-@-webkit-keyframes unhide {
-  from {
-    opacity: 0.0;
-  }
-
-  to {
-    opacity: 1.0;
-  }
-}
-
 @keyframes unhide {
   from {
     opacity: 0.0;
@@ -58,10 +48,8 @@ h1 {
 
 .unhidden {
   opacity: 1.0;
-  -webkit-animation-name: unhide;
-          animation-name: unhide;
-  -webkit-animation-duration: 0.25s;
-          animation-duration: 0.25s;
+  animation-name: unhide;
+  animation-duration: 0.25s;
 }
 
 .flex-container {
