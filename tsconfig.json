@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"target": "ES2017",
-		"outDir": "js",
+		"allowSyntheticDefaultImports": true,
 		"allowJs": true,
 		"removeComments": true,
 		"sourceMap": true,

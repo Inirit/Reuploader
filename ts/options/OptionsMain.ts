@@ -1,4 +1,4 @@
-import * as $ from "jquery";
+import $ from "jquery";
 
 import HandlerType from "../handlers/HandlerType";
 import ImgurOptions from "./ImgurOptions";
@@ -156,7 +156,7 @@ async function InitializeOptions()
 	console.debug("Options initialized!");
 }
 
-$(document).ready(() =>
+$(document).ready(async () =>
 {
-	InitializeOptions();
+	await InitializeOptions();
 });

@@ -18,12 +18,7 @@
 		"identity"
 	],
 	"background": {
-		"scripts": [
-			"node_modules/jquery/dist/jquery.js",
-			"node_modules/webextension-polyfill/dist/browser-polyfill.js",
-			"node_modules/blob-util/dist/blob-util.js",
-			"dist/background.bundle.js"
-		]
+		"page": "dist/background/background.html"
 	},
 	"content_scripts": [
 		{
@@ -32,12 +27,12 @@
 			],
 			"js": [
 				"node_modules/webextension-polyfill/dist/browser-polyfill.js",
-				"dist/content.bundle.js"
+				"dist/content/js/content.bundle.js"
 			]
 		}
 	],
 	"options_ui": {
-		"page": "html/options.html",
+		"page": "dist/options/options.html",
 		"browser_style": true
 	},
 	"icons": {
@@ -47,5 +42,10 @@
 		"gecko": {
 			"id": "{c2756713-0271-4423-b922-b2dac90f6690}"
 		}
-	}
+	},
+	"web_accessible_resources": [
+		"dist/background/js/background.bundle.js.map",
+		"dist/content/js/content.bundle.js.map",
+		"dist/options/js/options.bundle.js.map"
+	]
 }

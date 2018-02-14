@@ -19,12 +19,12 @@ abstract class HandlerBase implements IHandler
 	{
 		const notificationId = await browser.notifications.create(
 			`reupload_progress_${Date.now()}`, {
-				"type": "basic",
-				"title": browser.i18n.getMessage("extensionName"),
-				"iconUrl": "./images/up_arrow.png",
-				"message": browser.i18n.getMessage("notificationMessageReuploadProgress", HandlerType[this.HandlerType])
+				type: "basic",
+				title: browser.i18n.getMessage("extensionName"),
+				iconUrl: "./images/up_arrow.png",
+				message: browser.i18n.getMessage("notificationMessageReuploadProgress", HandlerType[this.HandlerType])
 			}
-		)
+		);
 
 		setTimeout(() =>
 		{
@@ -38,13 +38,13 @@ abstract class HandlerBase implements IHandler
 		return uploadedUrl;
 	}
 
-	protected async FetchImage(url: string): Promise<Blob>
+	protected async FetchImage(imageUrl: string): Promise<Blob>
 	{
 		let blob: Blob;
 
 		await $.ajax(
 			{
-				url: url,
+				url: imageUrl,
 				method: "GET",
 				xhr: this.GetFetchXhr
 			}).then((data: Blob) =>
@@ -67,7 +67,7 @@ abstract class HandlerBase implements IHandler
 
 		if (xhr.upload)
 		{
-			xhr.upload.addEventListener('progress', function (e)
+			xhr.upload.addEventListener("progress", (e) =>
 			{
 				if (e.lengthComputable)
 				{
@@ -94,10 +94,10 @@ abstract class HandlerBase implements IHandler
 	{
 		const notificationId = await browser.notifications.create(
 			`reupload_failed_${Date.now()}`, {
-				"type": "basic",
-				"title": browser.i18n.getMessage("extensionName"),
-				"iconUrl": "./images/up_arrow.png",
-				"message": `${errorMessage}`
+				type: "basic",
+				title: browser.i18n.getMessage("extensionName"),
+				iconUrl: "./images/up_arrow.png",
+				message: `${errorMessage}`
 			}
 		);
 

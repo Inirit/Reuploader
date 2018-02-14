@@ -27,7 +27,7 @@ class PomfHandler extends HandlerBase
 				contentType: false,
 				processData: false,
 				xhr: this.GetUploadXhr
-			}).then(data =>
+			}).then((data) =>
 			{
 				if (data && data.files)
 				{

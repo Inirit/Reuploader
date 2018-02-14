@@ -1,0 +1,97 @@
+@-webkit-keyframes unhide {
+  from {
+    opacity: 0.0;
+  }
+
+  to {
+    opacity: 1.0;
+  }
+}
+
+@keyframes unhide {
+  from {
+    opacity: 0.0;
+  }
+
+  to {
+    opacity: 1.0;
+  }
+}
+
+body {
+  margin: 0;
+  font-size: 16px;
+  /*background-color: blue*/
+}
+
+select {
+  font-size: 16px;
+}
+
+button {
+  font-size: 16px;
+}
+
+h1 {
+  font-weight: normal;
+  margin: 0;
+  padding: 0;
+}
+
+.display-none {
+  display: none;
+}
+
+.spacer-vertical {
+  height: 16px;
+  width: 100%;
+}
+
+.hidden {
+  opacity: 0.0;
+}
+
+.filled {
+  height: 100%;
+  width: 100%;
+}
+
+.unhidden {
+  opacity: 1.0;
+  -webkit-animation-name: unhide;
+          animation-name: unhide;
+  -webkit-animation-duration: 0.25s;
+          animation-duration: 0.25s;
+}
+
+.flex-container {
+  display: flex;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+#menu-container {
+  flex: 100;
+  /*background-color: purple;*/
+}
+
+#imgur-menu-container-container {
+  flex: 100;
+  /*background-color: cyan;*/
+}
+
+#none-menu-container {
+  flex: 100;
+  /*background-color: black;*/
+}
+
+#body-container {
+  min-height: 400px;
+  min-width: 600px;
+}

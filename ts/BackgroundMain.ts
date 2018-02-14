@@ -17,10 +17,10 @@ async function HandleGeneralError(errorMessage: string)
 {
 	const notificationId = await browser.notifications.create(
 		`reupload_failed_${Date.now()}`, {
-			"type": "basic",
-			"title": browser.i18n.getMessage("extensionName"),
-			"iconUrl": "./images/up_arrow.png",
-			"message": `${errorMessage}`
+			type: "basic",
+			title: browser.i18n.getMessage("extensionName"),
+			iconUrl: "./images/up_arrow.png",
+			message: `${errorMessage}`
 		}
 	);
 
@@ -61,14 +61,14 @@ async function HandleReuploadOnClick(info: browser.contextMenus.OnClickData, tab
 
 				if (uploadedUrl)
 				{
-					await browser.tabs.sendMessage(tab.id, { "url": uploadedUrl });
+					await browser.tabs.sendMessage(tab.id, { url: uploadedUrl });
 
 					const notificationId = await browser.notifications.create(
 						`copy_complete_${Date.now()}`, {
-							"type": "basic",
-							"title": browser.i18n.getMessage("extensionName"),
-							"iconUrl": "./images/up_arrow.png",
-							"message": browser.i18n.getMessage("notificationMessageCopyToClipboard", uploadedUrl)
+							type: "basic",
+							title: browser.i18n.getMessage("extensionName"),
+							iconUrl: "./images/up_arrow.png",
+							message: browser.i18n.getMessage("notificationMessageCopyToClipboard", uploadedUrl)
 						}
 					);
 
@@ -85,7 +85,6 @@ async function HandleReuploadOnClick(info: browser.contextMenus.OnClickData, tab
 		}
 	}
 }
-
 
 async function Initialize()
 {

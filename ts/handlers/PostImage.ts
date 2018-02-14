@@ -40,7 +40,7 @@ class PostImageData
 class PostImageHandler extends HandlerBase
 {
 	// Determined by observing network traffic from their screencap tool
-	private readonly _uploadUrl: string = 'http://api.postimage.org/1/upload';
+	private readonly _uploadUrl: string = "http://api.postimage.org/1/upload";
 
 	get HandlerType(): HandlerType
 	{
@@ -56,10 +56,10 @@ class PostImageHandler extends HandlerBase
 		await $.ajax(
 			{
 				url: this._uploadUrl,
-				method: 'POST',
+				method: "POST",
 				data: uploadData,
 				xhr: this.GetUploadXhr
-			}).then(data =>
+			}).then((data) =>
 			{
 				const xml = $(data);
 				const link = xml.find("hotlink");

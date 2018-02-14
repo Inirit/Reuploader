@@ -1,0 +1,34 @@
+{
+	"extends": "tslint:recommended",
+	"rules": {
+		"curly": true,
+		"object-literal-sort-keys": false,
+		"one-line": [
+			false
+		],
+		"member-access": false,
+		"linebreak-style": [
+			true,
+			"CRLF"
+		],
+		"indent": [
+			true,
+			"tabs"
+		],
+		"trailing-comma": [
+			false
+		],
+		"max-line-length": false,
+		"max-classes-per-file": false,
+		"variable-name": [
+			true,
+			"ban-keywords",
+			"check-format",
+			"allow-leading-underscore",
+			"allow-pascal-case"
+		],
+		"no-console": [
+			false
+		]
+	}
+}
