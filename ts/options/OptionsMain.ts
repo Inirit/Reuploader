@@ -20,7 +20,7 @@ async function InitializeHandlersOptions()
 
 	handlersLabelElement.prepend(browser.i18n.getMessage("optionsMenuHandlerSelectionLabel"));
 
-	PrimaryOptions.EnabledHandlers.forEach(handler =>
+	PrimaryOptions.EnabledHandlers.forEach((handler) =>
 	{
 		handlersSelectElement.append($(`<option value="${handler}">${HandlerType[handler]}</option>`));
 	});
@@ -29,7 +29,7 @@ async function InitializeHandlersOptions()
 
 	$(`option[value=${currentHandlerType}]`).prop("selected", true);
 
-	handlersSelectElement.change(SetSecondaryMenu)
+	handlersSelectElement.change(SetSecondaryMenu);
 }
 
 function SetSecondaryMenu()
@@ -41,7 +41,7 @@ function SetSecondaryMenu()
 
 	const a = "";
 
-	if (handlerType == HandlerType.Imgur)
+	if (handlerType === HandlerType.Imgur)
 	{
 		imgurOptions.removeClass("display-none");
 		noneOptions.addClass("display-none");

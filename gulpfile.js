@@ -49,7 +49,9 @@ gulp.task("scripts", ["background-scripts", "content-scripts", "options-scripts"
 
 gulp.task("styles", ["options-styles"]);
 
-gulp.task("watch", ["scripts", "styles"], () => 
+gulp.task("all", ["scripts", "styles"]);
+
+gulp.task("watch", ["all"], () => 
 {
 	gulp.watch([
 		"./ts/**/*",
