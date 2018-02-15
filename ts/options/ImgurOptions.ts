@@ -1,3 +1,5 @@
+import { ISimpleEvent, SimpleEventDispatcher } from "strongly-typed-events";
+
 import ExtensionOptionsBase from "./ExtensionOptionsBase";
 
 class UrlParams
@@ -24,6 +26,13 @@ class ImgurOptions extends ExtensionOptionsBase
 	private static readonly _refreshTokenName = "RefreshToken";
 	private static readonly _accountNameName = "AccountName";
 	private static readonly _accountIdName = "AccountId";
+
+	private static _authStateChange = new SimpleEventDispatcher<boolean>();
+
+	public static get onAuthStateChange(): ISimpleEvent<boolean>
+	{
+		return this._authStateChange.asEvent();
+	}
 
 	public static async GetAccessToken(): Promise<string>
 	{
@@ -77,6 +86,30 @@ class ImgurOptions extends ExtensionOptionsBase
 		await this.SetRefreshToken(params["refresh_token"]);
 		await this.SetAccountName(params["account_username"]);
 		await this.SetAccountId(params["account_id"]);
+
+		const authState = await this.IsAuthed();
+		this._authStateChange.dispatch(authState);
+	}
+
+	public static async ClearAuthInfo()
+	{
+		await this.SetAuthInfo(undefined);
+	}
+
+	public static async IsAuthed(): Promise<boolean>
+	{
+		let isAuthed: boolean;
+
+		if (await this.GetAccessToken())
+		{
+			isAuthed = true;
+		}
+		else
+		{
+			isAuthed = false;
+		}
+
+		return isAuthed;
 	}
 
 	private static async SetAccessToken(value: string)

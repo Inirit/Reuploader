@@ -79,17 +79,13 @@ async function HandleImgurAuth(e)
 
 	const redirectURL = browser.identity.getRedirectURL();
 	const response = await browser.identity.launchWebAuthFlow({
-		url: `https://api.imgur.com/oauth2/authorize?response_type=token&client_id=4a4f81163ed1219&redirect_uri=${encodeURIComponent(redirectURL)}`,
+		url: `https://api.imgur.com/oauth2/authorize?response_type=token&client_id=${ImgurOptions.ClientId}&redirect_uri=${encodeURIComponent(redirectURL)}`,
 		interactive: true
 	});
 
 	const decodedResponse = decodeURIComponent(response);
 
-	console.debug(`Decoded response: ${decodedResponse}`);
-
 	await ImgurOptions.SetAuthInfo(decodedResponse);
-
-	await SetImgurMenuState();
 }
 
 async function HandleImgurUnauth(e)
@@ -98,16 +94,15 @@ async function HandleImgurUnauth(e)
 
 	console.debug("Imgur unauth... ");
 
-	await ImgurOptions.SetAuthInfo(undefined);
-	await SetImgurMenuState();
+	await ImgurOptions.ClearAuthInfo();
 }
 
-async function SetImgurMenuState()
+async function SetImgurMenuState(isAuthed: boolean)
 {
 	let toHide = $("#imgur-authenticated-container");
 	let toUnhide = $("#imgur-not-authenticated-container");
 
-	if (await ImgurOptions.GetAccessToken())
+	if (isAuthed)
 	{
 		const temp = toHide;
 		toHide = toUnhide;
@@ -137,7 +132,10 @@ async function InitializeImgurMenu()
 	imgurUnauthButton.text(browser.i18n.getMessage("optionsImgurMenuUnauthButton"));
 	imgurUnauthButton.click(HandleImgurUnauth);
 
-	await SetImgurMenuState();
+	const isAuthed = await ImgurOptions.IsAuthed();
+	await SetImgurMenuState(isAuthed);
+
+	ImgurOptions.onAuthStateChange.subscribe(async (a) => await SetImgurMenuState(a));
 }
 
 async function InitializeOptions()

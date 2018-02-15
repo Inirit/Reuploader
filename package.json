@@ -31,8 +31,10 @@
 		"jquery": "^3.3.1",
 		"pump": "^3.0.0",
 		"rollup": "^0.55.5",
+		"rollup-plugin-commonjs": "^8.3.0",
 		"rollup-plugin-node-resolve": "^3.0.2",
 		"rollup-plugin-typescript": "^0.8.1",
+		"strongly-typed-events": "^1.0.1",
 		"tslint": "^5.9.1",
 		"typescript": "^2.7.1",
 		"web-ext-types": "^1.1.1"
