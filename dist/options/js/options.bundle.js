@@ -38,6 +38,8 @@ class ExtensionOptionsBase {
     }
 }
 
+class UrlParams {
+}
 class ImgurOptions extends ExtensionOptionsBase {
     static async GetAccessToken() {
         const value = await this.GetOption(this._accessTokenName, this._defaultOptions);
@@ -91,27 +93,26 @@ class ImgurOptions extends ExtensionOptionsBase {
         await this.SetOption(this._accountIdName, value);
     }
     static GetParamsFromResponseUrl(response) {
-        const values = [];
+        const values = new UrlParams();
         if (!response) {
             return values;
         }
-        const params = response.slice(response.indexOf('#') + 1).split('&');
-        for (let i = 0; i < params.length; i++) {
-            const param = params[i].split('=');
-            values.push(param[0]);
-            values[param[0]] = param[1];
+        const params = response.slice(response.indexOf("#") + 1).split("&");
+        for (const param of params) {
+            const paramPair = param.split("=");
+            values[paramPair[0]] = paramPair[1];
         }
         return values;
     }
 }
 ImgurOptions.ClientId = "4a4f81163ed1219";
 ImgurOptions._defaultOptions = {
-    "AccessToken": undefined,
-    "ExpiresIn": undefined,
-    "TokenType": undefined,
-    "RefreshToken": undefined,
-    "AccountName": undefined,
-    "AccountId": undefined
+    AccessToken: undefined,
+    ExpiresIn: undefined,
+    TokenType: undefined,
+    RefreshToken: undefined,
+    AccountName: undefined,
+    AccountId: undefined
 };
 ImgurOptions._accessTokenName = "AccessToken";
 ImgurOptions._expiresInName = "ExpiresIn";
@@ -136,7 +137,7 @@ PrimaryOptions.EnabledHandlers = [
 ];
 PrimaryOptions._handlerTypeName = "HandlerType";
 PrimaryOptions._defaultOptions = {
-    "HandlerType": `${HandlerType$1.Imgur}`
+    HandlerType: `${HandlerType$1.Imgur}`
 };
 
 async function HandleSaveOptions(e) {
@@ -159,7 +160,7 @@ function SetSecondaryMenu() {
     const handlerType = $("#handlers").val();
     const noneOptions = $("#none-menu-container");
     const imgurOptions = $("#imgur-menu-container-container");
-    if (handlerType === HandlerType$1.Imgur) {
+    if (handlerType == HandlerType$1.Imgur) {
         imgurOptions.removeClass("display-none");
         noneOptions.addClass("display-none");
     }

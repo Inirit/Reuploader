@@ -36,6 +36,8 @@ class ExtensionOptionsBase {
     }
 }
 
+class UrlParams {
+}
 class ImgurOptions extends ExtensionOptionsBase {
     static async GetAccessToken() {
         const value = await this.GetOption(this._accessTokenName, this._defaultOptions);
@@ -89,27 +91,26 @@ class ImgurOptions extends ExtensionOptionsBase {
         await this.SetOption(this._accountIdName, value);
     }
     static GetParamsFromResponseUrl(response) {
-        const values = [];
+        const values = new UrlParams();
         if (!response) {
             return values;
         }
-        const params = response.slice(response.indexOf('#') + 1).split('&');
-        for (let i = 0; i < params.length; i++) {
-            const param = params[i].split('=');
-            values.push(param[0]);
-            values[param[0]] = param[1];
+        const params = response.slice(response.indexOf("#") + 1).split("&");
+        for (const param of params) {
+            const paramPair = param.split("=");
+            values[paramPair[0]] = paramPair[1];
         }
         return values;
     }
 }
 ImgurOptions.ClientId = "4a4f81163ed1219";
 ImgurOptions._defaultOptions = {
-    "AccessToken": undefined,
-    "ExpiresIn": undefined,
-    "TokenType": undefined,
-    "RefreshToken": undefined,
-    "AccountName": undefined,
-    "AccountId": undefined
+    AccessToken: undefined,
+    ExpiresIn: undefined,
+    TokenType: undefined,
+    RefreshToken: undefined,
+    AccountName: undefined,
+    AccountId: undefined
 };
 ImgurOptions._accessTokenName = "AccessToken";
 ImgurOptions._expiresInName = "ExpiresIn";
@@ -200,8 +201,7 @@ class ImgurHandler extends HandlerBase {
         const authorizationHeader = await this.GetAuthorizationHeader();
         const formData = new FormData();
         formData.append("image", image, "image.jpg");
-        let uploadedUrl;
-        await $.ajax({
+        const ajaxSettings = {
             url: this._uploadUrl,
             method: "POST",
             data: formData,
@@ -213,7 +213,9 @@ class ImgurHandler extends HandlerBase {
                 Accept: "application/json"
             },
             xhr: this.GetUploadXhr
-        }).then(result => {
+        };
+        let uploadedUrl;
+        await $.ajax(ajaxSettings).then((result) => {
             if (result && result.data && result.data.link) {
                 uploadedUrl = result.data.link;
             }
@@ -253,8 +255,7 @@ class PomfHandler extends HandlerBase {
     async HandleUpload(image) {
         const formData = new FormData();
         formData.append("files[]", image, "image.jpg");
-        let uploadedUrl;
-        await $.ajax({
+        const ajaxSettings = {
             url: this._uploadUrl,
             method: "POST",
             data: formData,
@@ -262,7 +263,9 @@ class PomfHandler extends HandlerBase {
             contentType: false,
             processData: false,
             xhr: this.GetUploadXhr
-        }).then((data) => {
+        };
+        let uploadedUrl;
+        await $.ajax(ajaxSettings).then((data) => {
             if (data && data.files) {
                 const uploadedFile = data.files[0];
                 const uploadedFileName = uploadedFile.url;
@@ -300,13 +303,14 @@ class PostImageHandler extends HandlerBase {
     async HandleUpload(image) {
         const dataUrl = await blobUtil.blobToBase64String(image);
         const uploadData = new PostImageData(dataUrl);
-        let uploadedUrl;
-        await $.ajax({
+        const ajaxSettings = {
             url: this._uploadUrl,
             method: "POST",
             data: uploadData,
             xhr: this.GetUploadXhr
-        }).then((data) => {
+        };
+        let uploadedUrl;
+        await $.ajax(ajaxSettings).then((data) => {
             const xml = $(data);
             const link = xml.find("hotlink");
             if (link && link.length > 0) {
@@ -340,7 +344,7 @@ PrimaryOptions.EnabledHandlers = [
 ];
 PrimaryOptions._handlerTypeName = "HandlerType";
 PrimaryOptions._defaultOptions = {
-    "HandlerType": `${HandlerType$1.Imgur}`
+    HandlerType: `${HandlerType$1.Imgur}`
 };
 
 function HandleOnCreated() {

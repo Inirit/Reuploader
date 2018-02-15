@@ -39,9 +39,8 @@ function SetSecondaryMenu()
 	const noneOptions = $("#none-menu-container");
 	const imgurOptions = $("#imgur-menu-container-container");
 
-	const a = "";
-
-	if (handlerType === HandlerType.Imgur)
+	// tslint:disable-next-line:triple-equals
+	if (handlerType == HandlerType.Imgur)
 	{
 		imgurOptions.removeClass("display-none");
 		noneOptions.addClass("display-none");
