@@ -12,7 +12,7 @@ class PrimaryOptions extends ExtensionOptionsBase
 	private static readonly _handlerTypeName = "HandlerType";
 
 	private static readonly _defaultOptions: browser.storage.StorageObject = {
-		"HandlerType": `${HandlerType.Imgur}`
+		HandlerType: `${HandlerType.Imgur}`
 	};
 
 	public static async GetHandlerType(): Promise<HandlerType>

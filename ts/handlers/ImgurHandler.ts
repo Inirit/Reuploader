@@ -18,22 +18,24 @@ class ImgurHandler extends HandlerBase
 		const formData = new FormData();
 		formData.append("image", image, "image.jpg");
 
+		const ajaxSettings: JQuery.AjaxSettings<any> = {
+			url: this._uploadUrl,
+			method: "POST",
+			data: formData,
+			cache: false,
+			contentType: false,
+			processData: false,
+			headers: {
+				Authorization: authorizationHeader,
+				Accept: "application/json"
+			},
+			xhr: this.GetUploadXhr
+		};
+
 		let uploadedUrl: string;
 
-		await $.ajax(
-			{
-				url: this._uploadUrl,
-				method: "POST",
-				data: formData,
-				cache: false,
-				contentType: false,
-				processData: false,
-				headers: {
-					Authorization: authorizationHeader,
-					Accept: "application/json"
-				},
-				xhr: this.GetUploadXhr
-			}).then(result =>
+		await $.ajax(ajaxSettings).then(
+			(result) =>
 			{
 				if (result && result.data && result.data.link)
 				{

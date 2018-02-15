@@ -29,6 +29,23 @@
 		],
 		"no-console": [
 			false
-		]
+		],
+		"member-ordering": [
+			true,
+			{
+				"order": [
+					"public-static-field",
+					"private-static-field",
+					"public-instance-field",
+					"private-instance-field",
+					"public-constructor",
+					"private-constructor",
+					"public-instance-method",
+					"protected-instance-method",
+					"private-instance-method"
+				]
+			}
+		],
+		"no-string-literal": false
 	}
 }

@@ -1,16 +1,21 @@
 import ExtensionOptionsBase from "./ExtensionOptionsBase";
 
+class UrlParams
+{
+	[key: string]: string
+}
+
 class ImgurOptions extends ExtensionOptionsBase
 {
 	public static readonly ClientId: string = "4a4f81163ed1219";
 
 	private static readonly _defaultOptions: browser.storage.StorageObject = {
-		"AccessToken": undefined,
-		"ExpiresIn": undefined,
-		"TokenType": undefined,
-		"RefreshToken": undefined,
-		"AccountName": undefined,
-		"AccountId": undefined
+		AccessToken: undefined,
+		ExpiresIn: undefined,
+		TokenType: undefined,
+		RefreshToken: undefined,
+		AccountName: undefined,
+		AccountId: undefined
 	};
 
 	private static readonly _accessTokenName = "AccessToken";
@@ -104,22 +109,22 @@ class ImgurOptions extends ExtensionOptionsBase
 		await this.SetOption(this._accountIdName, value);
 	}
 
-	private static GetParamsFromResponseUrl(response: string): Array<string>
+	private static GetParamsFromResponseUrl(response: string): UrlParams
 	{
-		const values: Array<string> = [];
+		const values: UrlParams = new UrlParams();
 
 		if (!response)
 		{
 			return values;
 		}
 
-		const params = response.slice(response.indexOf('#') + 1).split('&');
+		const params = response.slice(response.indexOf("#") + 1).split("&");
 
-		for (let i = 0; i < params.length; i++)
+		for (const param of params)
 		{
-			const param = params[i].split('=');
-			values.push(param[0]);
-			values[param[0]] = param[1];
+			const paramPair = param.split("=");
+
+			values[paramPair[0]] = paramPair[1];
 		}
 		return values;
 	}

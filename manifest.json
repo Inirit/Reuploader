@@ -42,10 +42,5 @@
 		"gecko": {
 			"id": "{c2756713-0271-4423-b922-b2dac90f6690}"
 		}
-	},
-	"web_accessible_resources": [
-		"dist/background/js/background.bundle.js.map",
-		"dist/content/js/content.bundle.js.map",
-		"dist/options/js/options.bundle.js.map"
-	]
+	}
 }

@@ -16,18 +16,20 @@ class PomfHandler extends HandlerBase
 		const formData = new FormData();
 		formData.append("files[]", image, "image.jpg");
 
+		const ajaxSettings: JQuery.AjaxSettings<any> = {
+			url: this._uploadUrl,
+			method: "POST",
+			data: formData,
+			cache: false,
+			contentType: false,
+			processData: false,
+			xhr: this.GetUploadXhr
+		};
+
 		let uploadedUrl: string;
 
-		await $.ajax(
-			{
-				url: this._uploadUrl,
-				method: "POST",
-				data: formData,
-				cache: false,
-				contentType: false,
-				processData: false,
-				xhr: this.GetUploadXhr
-			}).then((data) =>
+		await $.ajax(ajaxSettings).then(
+			(data) =>
 			{
 				if (data && data.files)
 				{

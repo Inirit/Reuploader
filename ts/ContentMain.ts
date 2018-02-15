@@ -19,7 +19,7 @@ async function Initialize()
 {
 	console.debug(`Initializing...`);
 
-	browser.runtime.onMessage.addListener(OnMessage)
+	browser.runtime.onMessage.addListener(OnMessage);
 
 	console.debug(`Initialization complete.`);
 }

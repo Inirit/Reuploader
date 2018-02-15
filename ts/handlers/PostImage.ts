@@ -51,15 +51,18 @@ class PostImageHandler extends HandlerBase
 	{
 		const dataUrl = await blobUtil.blobToBase64String(image);
 		const uploadData = new PostImageData(dataUrl);
+
+		const ajaxSettings: JQuery.AjaxSettings<any> = {
+			url: this._uploadUrl,
+			method: "POST",
+			data: uploadData,
+			xhr: this.GetUploadXhr
+		};
+
 		let uploadedUrl: string;
 
-		await $.ajax(
-			{
-				url: this._uploadUrl,
-				method: "POST",
-				data: uploadData,
-				xhr: this.GetUploadXhr
-			}).then((data) =>
+		await $.ajax(ajaxSettings).then(
+			(data) =>
 			{
 				const xml = $(data);
 				const link = xml.find("hotlink");
