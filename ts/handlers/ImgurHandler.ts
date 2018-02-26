@@ -4,7 +4,7 @@ import HandlerType from "./HandlerType";
 
 class ImgurHandler extends HandlerBase
 {
-	private readonly _uploadUrl: string = "https://api.imgur.com/3/image";
+	private readonly _baseUrl: string = "https://api.imgur.com";
 
 	get HandlerType(): HandlerType
 	{
@@ -13,13 +13,29 @@ class ImgurHandler extends HandlerBase
 
 	public async HandleUpload(image: Blob): Promise<string>
 	{
+		if (await this.NeedsRefresh())
+		{
+			try
+			{
+				await this.RefreshImgurAuth();
+			}
+			catch (e)
+			{
+				this.HandleGeneralError(`Failed to upload image, authentication expired but refresh failed. ${e.message}`);
+
+				await ImgurOptions.ClearAuthInfo();
+
+				return null;
+			}
+		}
+
 		const authorizationHeader = await this.GetAuthorizationHeader();
 
 		const formData = new FormData();
 		formData.append("image", image, "image.jpg");
 
 		const ajaxSettings: JQuery.AjaxSettings<any> = {
-			url: this._uploadUrl,
+			url: `${this._baseUrl}/3/image`,
 			method: "POST",
 			data: formData,
 			cache: false,
@@ -74,6 +90,65 @@ class ImgurHandler extends HandlerBase
 		}
 
 		return authorizationHeader;
+	}
+
+	private async RefreshImgurAuth()
+	{
+		console.debug("Imgur auth refresh... ");
+
+		const redirectURL = browser.identity.getRedirectURL();
+		const clientId = await ImgurOptions.ClientId;
+		const refreshToken = await ImgurOptions.GetRefreshToken();
+
+		const body = {
+			grant_type: "refresh_token",
+			client_id: ImgurOptions.ClientId,
+			client_secret: ImgurOptions.ClientSecret,
+			refresh_token: refreshToken
+		};
+
+		const ajaxSettings: JQuery.AjaxSettings<any> = {
+			url: `${this._baseUrl}/oauth2/token`,
+			method: "POST",
+			data: JSON.stringify(body),
+			cache: false,
+			contentType: "application/json",
+			processData: false,
+			headers: {
+				Accept: "application/json"
+			}
+		};
+
+		let authInfo: string[];
+
+		await $.ajax(ajaxSettings).then(
+			(result) =>
+			{
+				if (result)
+				{
+					authInfo = result;
+				}
+			},
+			(jqXHR, textStatus, error) =>
+			{
+				console.debug(`${textStatus} - ${error}`);
+			});
+
+		if (!authInfo)
+		{
+			throw new Error("Failed to refresh auth, response was empty.");
+		}
+
+		await ImgurOptions.SetAuthInfo(authInfo);
+	}
+
+	private async NeedsRefresh(): Promise<boolean>
+	{
+		const currentTime = Date.now();
+		const expirationTime = await ImgurOptions.GetExpirationTime();
+		const needsRefresh = expirationTime && expirationTime <= currentTime;
+
+		return needsRefresh;
 	}
 }
 

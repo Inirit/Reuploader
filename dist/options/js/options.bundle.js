@@ -755,8 +755,6 @@ class ExtensionOptionsBase {
     }
 }
 
-class UrlParams {
-}
 class ImgurOptions extends ExtensionOptionsBase {
     static get onAuthStateChange() {
         return this._authStateChange.asEvent();
@@ -765,8 +763,8 @@ class ImgurOptions extends ExtensionOptionsBase {
         const value = await this.GetOption(this._accessTokenName, this._defaultOptions);
         return value;
     }
-    static async GetExpiresIn() {
-        const value = await this.GetOption(this._expiresInName, this._defaultOptions);
+    static async GetExpirationTime() {
+        const value = await this.GetOption(this._expirationTime, this._defaultOptions);
         return value;
     }
     static async GetTokenType() {
@@ -785,19 +783,28 @@ class ImgurOptions extends ExtensionOptionsBase {
         const value = await this.GetOption(this._accountIdName, this._defaultOptions);
         return value;
     }
-    static async SetAuthInfo(authResponse) {
-        const params = this.GetParamsFromResponseUrl(authResponse);
-        await this.SetAccessToken(params["access_token"]);
-        await this.SetExpiresIn(params["expires_in"]);
-        await this.SetTokenType(params["token_type"]);
-        await this.SetRefreshToken(params["refresh_token"]);
-        await this.SetAccountName(params["account_username"]);
-        await this.SetAccountId(params["account_id"]);
-        const authState = await this.IsAuthed();
-        this._authStateChange.dispatch(authState);
+    static async SetAuthInfo(authInfo) {
+        const currentAuthState = await this.IsAuthed();
+        if (authInfo["error"]) {
+            this.ClearAuthInfo();
+            console.debug(`SetAuthInfo failed with error: ${authInfo["error"]}`);
+            throw new Error(`SetAuthInfo failed with error: ${authInfo["error"]}`);
+        }
+        await this.SetAccessToken(authInfo["access_token"]);
+        await this.SetExpirationTime(authInfo["expires_in"]);
+        await this.SetTokenType(authInfo["token_type"]);
+        await this.SetRefreshToken(authInfo["refresh_token"]);
+        await this.SetAccountName(authInfo["account_username"]);
+        const newAuthState = await this.IsAuthed();
+        if ((newAuthState && authInfo["account_id"]) || !newAuthState) {
+            await this.SetAccountId(authInfo["account_id"]);
+        }
+        if (currentAuthState !== newAuthState) {
+            this._authStateChange.dispatch(newAuthState);
+        }
     }
     static async ClearAuthInfo() {
-        await this.SetAuthInfo(undefined);
+        await this.SetAuthInfo(new Array());
     }
     static async IsAuthed() {
         let isAuthed;
@@ -812,8 +819,14 @@ class ImgurOptions extends ExtensionOptionsBase {
     static async SetAccessToken(value) {
         await this.SetOption(this._accessTokenName, value);
     }
-    static async SetExpiresIn(value) {
-        await this.SetOption(this._expiresInName, value);
+    static async SetExpirationTime(value) {
+        let expirationTime;
+        if (value) {
+            const expiresInMs = parseInt(value, 10) * 1000;
+            const currentTime = Date.now();
+            expirationTime = currentTime + expiresInMs;
+        }
+        await this.SetOption(this._expirationTime, expirationTime);
     }
     static async SetTokenType(value) {
         await this.SetOption(this._tokenTypeName, value);
@@ -827,30 +840,19 @@ class ImgurOptions extends ExtensionOptionsBase {
     static async SetAccountId(value) {
         await this.SetOption(this._accountIdName, value);
     }
-    static GetParamsFromResponseUrl(response) {
-        const values = new UrlParams();
-        if (!response) {
-            return values;
-        }
-        const params = response.slice(response.indexOf("#") + 1).split("&");
-        for (const param of params) {
-            const paramPair = param.split("=");
-            values[paramPair[0]] = paramPair[1];
-        }
-        return values;
-    }
 }
 ImgurOptions.ClientId = "4a4f81163ed1219";
+ImgurOptions.ClientSecret = "20e4c6d9d9cbc2554f08bd2c8c450b271cda7bb8";
 ImgurOptions._defaultOptions = {
     AccessToken: undefined,
-    ExpiresIn: undefined,
+    ExpirationTime: undefined,
     TokenType: undefined,
     RefreshToken: undefined,
     AccountName: undefined,
     AccountId: undefined
 };
 ImgurOptions._accessTokenName = "AccessToken";
-ImgurOptions._expiresInName = "ExpiresIn";
+ImgurOptions._expirationTime = "ExpirationTime";
 ImgurOptions._tokenTypeName = "TokenType";
 ImgurOptions._refreshTokenName = "RefreshToken";
 ImgurOptions._accountNameName = "AccountName";
@@ -926,7 +928,20 @@ async function HandleImgurAuth(e) {
         interactive: true
     });
     const decodedResponse = decodeURIComponent(response);
-    await ImgurOptions.SetAuthInfo(decodedResponse);
+    const authInfo = GetParamsFromResponseUrl(decodedResponse);
+    await ImgurOptions.SetAuthInfo(authInfo);
+}
+function GetParamsFromResponseUrl(response) {
+    const values = new Array();
+    if (!response) {
+        return values;
+    }
+    const params = response.slice(response.indexOf("#") + 1).split("&");
+    for (const param of params) {
+        const paramPair = param.split("=");
+        values[paramPair[0]] = paramPair[1];
+    }
+    return values;
 }
 async function HandleImgurUnauth(e) {
     e.preventDefault();
@@ -940,8 +955,10 @@ async function SetImgurMenuState(isAuthed) {
         const temp = toHide;
         toHide = toUnhide;
         toUnhide = temp;
-        $("#imgur-account-info").text(`${await ImgurOptions.GetAccountName()} (${await ImgurOptions.GetAccountId()})`);
-        $("#imgur-auth-info").text(`${await ImgurOptions.GetAccessToken()}`);
+        const accountName = await ImgurOptions.GetAccountName();
+        const profileUrl = `<a href="https://imgur.com/user/${accountName}">${accountName}</a>`;
+        const authInfoString = browser.i18n.getMessage("imgurAuthUser", profileUrl);
+        $("#imgur-account-info-container").html(authInfoString);
     }
     toHide.addClass("display-none");
     toUnhide.removeClass("display-none");

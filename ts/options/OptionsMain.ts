@@ -84,8 +84,29 @@ async function HandleImgurAuth(e)
 	});
 
 	const decodedResponse = decodeURIComponent(response);
+	const authInfo = GetParamsFromResponseUrl(decodedResponse);
 
-	await ImgurOptions.SetAuthInfo(decodedResponse);
+	await ImgurOptions.SetAuthInfo(authInfo);
+}
+
+function GetParamsFromResponseUrl(response: string): any
+{
+	const values: string[] = new Array<string>();
+
+	if (!response)
+	{
+		return values;
+	}
+
+	const params = response.slice(response.indexOf("#") + 1).split("&");
+
+	for (const param of params)
+	{
+		const paramPair = param.split("=");
+
+		values[paramPair[0]] = paramPair[1];
+	}
+	return values;
 }
 
 async function HandleImgurUnauth(e)
@@ -108,8 +129,17 @@ async function SetImgurMenuState(isAuthed: boolean)
 		toHide = toUnhide;
 		toUnhide = temp;
 
-		$("#imgur-account-info").text(`${await ImgurOptions.GetAccountName()} (${await ImgurOptions.GetAccountId()})`);
-		$("#imgur-auth-info").text(`${await ImgurOptions.GetAccessToken()}`);
+		// $("#imgur-account-info").text(`${await ImgurOptions.GetAccountName()} (${await ImgurOptions.GetAccountId()})`);
+		// $("#imgur-auth-info").text(`${await ImgurOptions.GetAccessToken()}`);
+
+		const accountName = await ImgurOptions.GetAccountName();
+		const profileUrl = `<a href="https://imgur.com/user/${accountName}">${accountName}</a>`;
+		const authInfoString = browser.i18n.getMessage("imgurAuthUser", profileUrl);
+
+		// $("#imgur-profile-link").attr("href", profileUrl);
+		// $("#imgur-profile-link").text(accountName);
+
+		$("#imgur-account-info-container").html(authInfoString);
 	}
 
 	toHide.addClass("display-none");

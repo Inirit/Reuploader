@@ -59,6 +59,14 @@
 			}
 		}
 	},
+	"imgurAuthUser": {
+		"message": "Authenticated as $imgurProfileUrl$",
+		"placeholders": {
+			"imgurProfileUrl": {
+				"content": "$1"
+			}
+		}
+	},
 	"optionsMenuHandlerSelectionLabel": {
 		"message": "Upload Service: "
 	},

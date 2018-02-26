@@ -2,18 +2,14 @@ import { ISimpleEvent, SimpleEventDispatcher } from "strongly-typed-events";
 
 import ExtensionOptionsBase from "./ExtensionOptionsBase";
 
-class UrlParams
-{
-	[key: string]: string
-}
-
 class ImgurOptions extends ExtensionOptionsBase
 {
 	public static readonly ClientId: string = "4a4f81163ed1219";
+	public static readonly ClientSecret: string = "20e4c6d9d9cbc2554f08bd2c8c450b271cda7bb8";
 
 	private static readonly _defaultOptions: browser.storage.StorageObject = {
 		AccessToken: undefined,
-		ExpiresIn: undefined,
+		ExpirationTime: undefined,
 		TokenType: undefined,
 		RefreshToken: undefined,
 		AccountName: undefined,
@@ -21,7 +17,7 @@ class ImgurOptions extends ExtensionOptionsBase
 	};
 
 	private static readonly _accessTokenName = "AccessToken";
-	private static readonly _expiresInName = "ExpiresIn";
+	private static readonly _expirationTime = "ExpirationTime";
 	private static readonly _tokenTypeName = "TokenType";
 	private static readonly _refreshTokenName = "RefreshToken";
 	private static readonly _accountNameName = "AccountName";
@@ -41,9 +37,9 @@ class ImgurOptions extends ExtensionOptionsBase
 		return value;
 	}
 
-	public static async GetExpiresIn(): Promise<string>
+	public static async GetExpirationTime(): Promise<number>
 	{
-		const value = await this.GetOption<string>(this._expiresInName, this._defaultOptions);
+		const value = await this.GetOption<number>(this._expirationTime, this._defaultOptions);
 
 		return value;
 	}
@@ -76,24 +72,40 @@ class ImgurOptions extends ExtensionOptionsBase
 		return value;
 	}
 
-	public static async SetAuthInfo(authResponse: string)
+	public static async SetAuthInfo(authInfo: string[])
 	{
-		const params = this.GetParamsFromResponseUrl(authResponse);
+		const currentAuthState = await this.IsAuthed();
 
-		await this.SetAccessToken(params["access_token"]);
-		await this.SetExpiresIn(params["expires_in"]);
-		await this.SetTokenType(params["token_type"]);
-		await this.SetRefreshToken(params["refresh_token"]);
-		await this.SetAccountName(params["account_username"]);
-		await this.SetAccountId(params["account_id"]);
+		if (authInfo["error"])
+		{
+			this.ClearAuthInfo();
 
-		const authState = await this.IsAuthed();
-		this._authStateChange.dispatch(authState);
+			console.debug(`SetAuthInfo failed with error: ${authInfo["error"]}`);
+			throw new Error(`SetAuthInfo failed with error: ${authInfo["error"]}`);
+		}
+
+		await this.SetAccessToken(authInfo["access_token"]);
+		await this.SetExpirationTime(authInfo["expires_in"]);
+		await this.SetTokenType(authInfo["token_type"]);
+		await this.SetRefreshToken(authInfo["refresh_token"]);
+		await this.SetAccountName(authInfo["account_username"]);
+
+		const newAuthState = await this.IsAuthed();
+
+		if ((newAuthState && authInfo["account_id"]) || !newAuthState)
+		{
+			await this.SetAccountId(authInfo["account_id"]);
+		}
+
+		if (currentAuthState !== newAuthState)
+		{
+			this._authStateChange.dispatch(newAuthState);
+		}
 	}
 
 	public static async ClearAuthInfo()
 	{
-		await this.SetAuthInfo(undefined);
+		await this.SetAuthInfo(new Array<string>());
 	}
 
 	public static async IsAuthed(): Promise<boolean>
@@ -117,9 +129,19 @@ class ImgurOptions extends ExtensionOptionsBase
 		await this.SetOption(this._accessTokenName, value);
 	}
 
-	private static async SetExpiresIn(value: string)
+	private static async SetExpirationTime(value: string)
 	{
-		await this.SetOption(this._expiresInName, value);
+		let expirationTime: number;
+
+		if (value)
+		{
+			const expiresInMs = parseInt(value, 10) * 1000;
+			const currentTime = Date.now();
+
+			expirationTime = currentTime + expiresInMs;
+		}
+
+		await this.SetOption(this._expirationTime, expirationTime);
 	}
 
 	private static async SetTokenType(value: string)
@@ -140,26 +162,6 @@ class ImgurOptions extends ExtensionOptionsBase
 	private static async SetAccountId(value: string)
 	{
 		await this.SetOption(this._accountIdName, value);
-	}
-
-	private static GetParamsFromResponseUrl(response: string): UrlParams
-	{
-		const values: UrlParams = new UrlParams();
-
-		if (!response)
-		{
-			return values;
-		}
-
-		const params = response.slice(response.indexOf("#") + 1).split("&");
-
-		for (const param of params)
-		{
-			const paramPair = param.split("=");
-
-			values[paramPair[0]] = paramPair[1];
-		}
-		return values;
 	}
 }
 
