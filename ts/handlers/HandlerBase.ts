@@ -109,12 +109,12 @@ abstract class HandlerBase implements IHandler
 
 	protected async HandleUploadError(jqXHR: JQuery.jqXHR, textStatus: JQuery.Ajax.ErrorTextStatus, error: string)
 	{
-		await this.HandleGeneralError(browser.i18n.getMessage("errorImageFailedToUpload", [textStatus, error]));
+		await this.HandleGeneralError(browser.i18n.getMessage("errorImageFailedToUpload", [textStatus, jqXHR.responseText]));
 	}
 
 	protected async HandleFetchError(jqXHR: JQuery.jqXHR, textStatus: JQuery.Ajax.ErrorTextStatus, error: string)
 	{
-		await this.HandleGeneralError(browser.i18n.getMessage("errorImageFailedToDownload", [textStatus, error]));
+		await this.HandleGeneralError(browser.i18n.getMessage("errorImageFailedToDownload", [textStatus, jqXHR.responseText]));
 	}
 }
 
