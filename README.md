@@ -1,28 +1,12 @@
 # Reuploader
 
-[![Build Status](https://travis-ci.org/Inirit/Reuploader.svg?branch=master)](https://travis-ci.org/Inirit/Reuploader) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/70acff441d81487380ae4923d0f819f3)](https://www.codacy.com/app/Inirit/Reuploader?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Inirit/Reuploader&amp;utm_campaign=Badge_Grade)
-
 A web extension for quickly and easily rehosting images.
 
 ## Release
 
-Currently released for Firefox. May support other browsers later.
+Currently released for Firefox.
 
 * [Firefox](https://addons.mozilla.org/en-US/firefox/addon/reuploader/)
-
-## Status
-
-* Feb. 11 2018
-  * Removed the "experimental" tag on Firefox addon hub, it seems to be pretty stable.
-* Nov. 20
-  * Alpha release has been published to Firefox addon hub.
-* Nov. 19
-  * Basic feature set is now implemented.
-  * Nothing has been published yet, but I'm hoping to do so soon.
-  * Code still needs some cleanup
-* Nov. 15
-  * Still in early development, plus I don't know how to make web extensions.
-  * I hate JavaScript.
 
 ## Building
 
